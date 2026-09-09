@@ -1,4 +1,4 @@
-# AI Architecture Patterns
+![AI Architecture Patterns banner](https://raw.githubusercontent.com/max420max/AI-Architecture-patterns/main/ai-architecture-patterns-banner.png)
 ## The Complete Guide to Designing Modern AI Systems
 
 Artificial Intelligence architecture is evolving rapidly.
