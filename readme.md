@@ -1,631 +1,2449 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Architecture Patterns — The Complete Guide to Designing Modern AI Systems</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --paper: #F3F6FB;
-  --paper-deep: #EAF0FA;
-  --ink: #101826;
-  --ink-soft: #47536B;
-  --line: #C7D3E8;
-  --grid-line: rgba(37, 99, 235, 0.075);
+# AI Architecture Patterns
+## The Complete Guide to Designing Modern AI Systems
 
-  --model-line: #2563EB;   --model-fill: #DBEAFE;
-  --knowledge-line: #16A34A; --knowledge-fill: #DCFCE7;
-  --workflow-line: #D97706;  --workflow-fill: #FEF3C7;
-  --agent-line: #DB2777;     --agent-fill: #FCE7F3;
-  --integration-line: #0284C7; --integration-fill: #E0F2FE;
-  --reliability-line: #E11D48; --reliability-fill: #FFE4E6;
-  --operations-line: #7C3AED;  --operations-fill: #EDE9FE;
+Artificial Intelligence architecture is evolving rapidly.
 
-  --radius-s: 6px;
-  --radius-m: 10px;
-}
+A few years ago, an AI application could often be described as:
 
-* { box-sizing: border-box; }
+**Application → Model → Response**
 
-html { scroll-behavior: smooth; }
+Today, production AI systems can contain:
 
-body {
-  margin: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 17px;
-  line-height: 1.65;
-  -webkit-font-smoothing: antialiased;
-  position: relative;
-}
+- Foundation models
+- Small language models
+- RAG
+- Vector and hybrid search
+- Knowledge graphs
+- Agents
+- Tool calling
+- Memory
+- Planning
+- Model routing
+- Prompt chaining
+- Parallel workflows
+- Evaluator-optimizer loops
+- Multi-agent orchestration
+- Human-in-the-loop
+- Guardrails
+- AI gateways
+- Evaluation pipelines
+- Observability
+- Event-driven processing
+- Traditional deterministic services
 
-.blueprint-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-image:
-    linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 32px 32px;
-  background-color: var(--paper);
-}
+This creates a new challenge for architects:
 
-h1, h2, h3, h4 {
-  font-family: 'Space Grotesk', 'Inter', sans-serif;
-  color: var(--ink);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-}
+> **How do we choose the right AI architecture pattern without making the system unnecessarily complex?**
 
-a { color: var(--model-line); text-decoration-color: rgba(37,99,235,0.35); text-underline-offset: 3px; }
-a:hover { text-decoration-color: var(--model-line); }
+The answer is not to start with a framework or an LLM.
 
-/* ---------------- HERO ---------------- */
-.hero {
-  padding: 76px 6vw 64px;
-  border-bottom: 1.5px solid var(--line);
-  background: linear-gradient(180deg, var(--paper-deep), var(--paper) 85%);
-}
-.hero-inner {
-  max-width: 1180px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 48px;
-  align-items: center;
-}
-.hero-title {
-  margin: 0 0 22px;
-  font-size: clamp(40px, 6vw, 68px);
-  font-weight: 700;
-}
-.hero-sub {
-  max-width: 46ch;
-  font-size: 19px;
-  color: var(--ink-soft);
-  margin: 0 0 18px;
-}
-.hero-meta {
-  font-size: 14.5px;
-  color: var(--ink-soft);
-  margin: 0;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-  max-width: 40ch;
-}
+Start with the **business problem, autonomy required, knowledge required, workflow complexity, risk, and operational requirements**.
 
-/* ---- Hero: hub-and-spoke schematic ---- */
-.hero-schematic {
-  position: relative;
-  min-height: 360px;
-}
-.hero-schematic svg.connector {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-.hero-schematic svg.connector line {
-  stroke: var(--line);
-  stroke-width: 1.4;
-}
-.node {
-  position: absolute;
-  padding: 9px 14px;
-  border-radius: var(--radius-s);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13.5px;
-  font-weight: 600;
-  border: 1.6px solid;
-  box-shadow: 3px 4px 0 rgba(16,24,38,0.06);
-  white-space: nowrap;
-  transform: translate(-50%, -50%);
-}
-.node.root {
-  background: var(--operations-fill);
-  border-color: var(--operations-line);
-  color: #4c1d95;
-  font-size: 15px;
-  padding: 11px 18px;
-  z-index: 2;
-}
+This article provides a practical catalog of the major AI architecture patterns and explains how they fit together.
 
-/* ---------------- LAYOUT ---------------- */
-.layout {
-  max-width: 1180px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 260px minmax(0,1fr);
-  gap: 56px;
-  padding: 48px 6vw 40px;
-}
+---
 
-.toc {
-  position: sticky;
-  top: 24px;
-  align-self: start;
-  max-height: calc(100vh - 48px);
-  overflow-y: auto;
-  padding-right: 8px;
-  border-right: 1px solid var(--line);
-}
-.toc-head {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--ink);
-  margin-bottom: 14px;
-}
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 10px;
-  margin-bottom: 20px;
-  padding-bottom: 18px;
-  border-bottom: 1px dashed var(--line);
-}
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-.legend-dot {
-  width: 9px; height: 9px; border-radius: 50%;
-  border: 1.4px solid;
-  flex-shrink: 0;
-}
-.toc-list {
-  list-style: none;
-  margin: 0; padding: 0;
-  font-size: 14px;
-}
-.toc-list li { margin-bottom: 3px; }
-.toc-list a {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 5px 8px;
-  border-radius: var(--radius-s);
-  color: var(--ink-soft);
-  text-decoration: none;
-  transition: background 0.12s ease, color 0.12s ease;
-}
-.toc-list a:hover { background: var(--paper-deep); color: var(--ink); }
-.toc-list a.active { background: var(--paper-deep); color: var(--ink); font-weight: 600; }
-.toc-dot {
-  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-  border: 1.2px solid;
-}
-.toc-list .h2-item a { padding-left: 22px; font-size: 13px; }
+# 1. First: What Is an AI Architecture Pattern?
 
-/* ---------------- CONTENT ---------------- */
-.content { min-width: 0; }
-.loading { color: var(--ink-soft); font-style: italic; }
+An **AI architecture pattern** is a reusable architectural approach for solving a recurring problem in an AI-enabled system.
 
-.content h1 {
-  font-size: 30px;
-  margin: 64px 0 18px;
-  padding-top: 18px;
-  scroll-margin-top: 24px;
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-}
-.content > h1:first-child { margin-top: 0; }
-.content h1 .chip {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 20px;
-  border: 1.6px solid;
-  flex-shrink: 0;
-  transform: translateY(-2px);
-}
-.content h2 {
-  font-size: 22px;
-  margin: 36px 0 14px;
-  scroll-margin-top: 24px;
-}
-.content h3 {
-  font-size: 18px;
-  margin: 28px 0 10px;
-  color: var(--ink);
-}
-.content p { margin: 0 0 16px; color: var(--ink); }
-.content ul, .content ol { margin: 0 0 16px; padding-left: 24px; }
-.content li { margin-bottom: 6px; }
-.content strong { font-weight: 700; }
-.content hr {
-  border: none;
-  border-top: 1.5px dashed var(--line);
-  margin: 40px 0;
-}
+It describes things such as:
 
-.content blockquote {
-  margin: 20px 0;
-  padding: 14px 20px;
-  background: var(--paper-deep);
-  border-left: 3.5px solid var(--operations-line);
-  border-radius: 0 var(--radius-s) var(--radius-s) 0;
-  color: #322659;
-}
-.content blockquote p { margin: 0; color: inherit; }
+- How intelligence is invoked
+- How knowledge is provided
+- How tasks are decomposed
+- How decisions are made
+- How AI components interact
+- How workflows are controlled
+- How results are validated
+- How humans participate
+- How the system scales and remains reliable
 
-.content code {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.86em;
-  background: var(--paper-deep);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-.content pre {
-  background: #10182A;
-  color: #DCE6FA;
-  padding: 18px 20px;
-  border-radius: var(--radius-m);
-  overflow-x: auto;
-  margin: 20px 0;
-}
-.content pre code {
-  background: none;
-  color: inherit;
-  padding: 0;
-  font-size: 14px;
-  line-height: 1.6;
-}
+Think of patterns as architectural building blocks.
 
-.content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 22px 0;
-  font-size: 14.5px;
-}
-.content th, .content td {
-  border: 1px solid var(--line);
-  padding: 9px 12px;
-  text-align: left;
-}
-.content th {
-  background: var(--paper-deep);
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 600;
-}
-.content tr:nth-child(even) td { background: rgba(37,99,235,0.02); }
+```mermaid
+flowchart LR
+    A["🎯 Business Problem"] --> B["🧩 Architecture Pattern"]
+    B --> C["🤖 AI Components"]
+    C --> D["⚙️ Workflow"]
+    D --> E["📊 Production System"]
 
-/* Mermaid diagrams */
-.mermaid-wrap {
-  margin: 26px 0;
-  padding: 22px;
-  background: #FFFFFF;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-m);
-  overflow-x: auto;
-  box-shadow: 4px 5px 0 rgba(16,24,38,0.045);
-}
-.mermaid-wrap svg { max-width: 100%; }
+    classDef problem fill:#FFE4E6,stroke:#E11D48,color:#111;
+    classDef pattern fill:#FEF3C7,stroke:#D97706,color:#111;
+    classDef ai fill:#DBEAFE,stroke:#2563EB,color:#111;
+    classDef workflow fill:#DCFCE7,stroke:#16A34A,color:#111;
+    classDef prod fill:#EDE9FE,stroke:#7C3AED,color:#111;
 
-/* ---------------- FOOTER ---------------- */
-.site-footer {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 36px 6vw 70px;
-  border-top: 1px solid var(--line);
-  color: var(--ink-soft);
-  font-size: 14px;
-}
+    class A problem;
+    class B pattern;
+    class C ai;
+    class D workflow;
+    class E prod;
+```
 
-#back-to-top {
-  position: fixed;
-  right: 26px;
-  bottom: 26px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1.6px solid var(--line);
-  background: #fff;
-  color: var(--ink);
-  font-size: 18px;
-  cursor: pointer;
-  box-shadow: 3px 4px 0 rgba(16,24,38,0.08);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-#back-to-top.visible { opacity: 1; pointer-events: auto; }
+The key principle is:
 
-/* ---------------- RESPONSIVE ---------------- */
-@media (max-width: 880px) {
-  .hero-inner { grid-template-columns: 1fr; }
-  .hero-schematic { display: none; }
-  .layout { grid-template-columns: 1fr; }
-  .toc {
-    position: static;
-    max-height: none;
-    border-right: none;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 24px;
-    margin-bottom: 8px;
-  }
-}
+> **Patterns are composable. They are not mutually exclusive.**
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  #back-to-top { transition: none; }
-}
+A production system can use:
 
-</style>
-</head>
-<body>
+**RAG + Routing + Agent + Tools + Memory + Guardrails + Human Approval + Evaluation + Observability**
 
-<div class="blueprint-bg" aria-hidden="true"></div>
+---
 
-<header class="hero">
-  <div class="hero-inner">
-    <div class="hero-text">
-      <h1 class="hero-title">AI Architecture<br>Patterns</h1>
-      <p class="hero-sub">A field guide for architects: how to design modern AI systems, from a single model call up to fully orchestrated, multi-agent platforms.</p>
-      <p class="hero-meta">Fifty named patterns across seven layers, meant to be composed rather than picked one at a time.</p>
-    </div>
-    <div class="hero-schematic" id="hero-schematic" aria-hidden="true"></div>
-  </div>
-</header>
+# 2. The Complete AI Architecture Pattern Landscape
 
-<div class="layout">
-  <nav class="toc" id="toc" aria-label="Table of contents">
-    <div class="toc-head">Contents</div>
-    <div class="legend" id="legend"></div>
-    <ol class="toc-list" id="toc-list"></ol>
-  </nav>
+A useful architecture taxonomy is to divide AI patterns into seven major groups.
 
-  <main class="content" id="content">
-    <p class="loading">Loading the guide…</p>
-  </main>
-</div>
+```mermaid
+flowchart TB
 
-<footer class="site-footer">
-  <p>Composed from the source guide, rendered as a blueprint. Patterns are additive — start simple, add a layer only when the problem asks for it.</p>
-</footer>
+    AI["🧠 AI ARCHITECTURE PATTERNS"]
 
-<button id="back-to-top" aria-label="Back to top">↑</button>
+    AI --> P["1️⃣ MODEL & INFERENCE"]
+    AI --> K["2️⃣ KNOWLEDGE & GROUNDING"]
+    AI --> W["3️⃣ WORKFLOW & REASONING"]
+    AI --> A["4️⃣ AGENT & ORCHESTRATION"]
+    AI --> I["5️⃣ DATA & INTEGRATION"]
+    AI --> R["6️⃣ RELIABILITY & CONTROL"]
+    AI --> O["7️⃣ OPERATIONS & GOVERNANCE"]
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
-<script>
-window.__GUIDE_B64__ = 'IyBBSSBBcmNoaXRlY3R1cmUgUGF0dGVybnMKIyMgVGhlIENvbXBsZXRlIEd1aWRlIHRvIERlc2lnbmluZyBNb2Rlcm4gQUkgU3lzdGVtcwoKQXJ0aWZpY2lhbCBJbnRlbGxpZ2VuY2UgYXJjaGl0ZWN0dXJlIGlzIGV2b2x2aW5nIHJhcGlkbHkuCgpBIGZldyB5ZWFycyBhZ28sIGFuIEFJIGFwcGxpY2F0aW9uIGNvdWxkIG9mdGVuIGJlIGRlc2NyaWJlZCBhczoKCioqQXBwbGljYXRpb24g4oaSIE1vZGVsIOKGkiBSZXNwb25zZSoqCgpUb2RheSwgcHJvZHVjdGlvbiBBSSBzeXN0ZW1zIGNhbiBjb250YWluOgoKLSBGb3VuZGF0aW9uIG1vZGVscwotIFNtYWxsIGxhbmd1YWdlIG1vZGVscwotIFJBRwotIFZlY3RvciBhbmQgaHlicmlkIHNlYXJjaAotIEtub3dsZWRnZSBncmFwaHMKLSBBZ2VudHMKLSBUb29sIGNhbGxpbmcKLSBNZW1vcnkKLSBQbGFubmluZwotIE1vZGVsIHJvdXRpbmcKLSBQcm9tcHQgY2hhaW5pbmcKLSBQYXJhbGxlbCB3b3JrZmxvd3MKLSBFdmFsdWF0b3Itb3B0aW1pemVyIGxvb3BzCi0gTXVsdGktYWdlbnQgb3JjaGVzdHJhdGlvbgotIEh1bWFuLWluLXRoZS1sb29wCi0gR3VhcmRyYWlscwotIEFJIGdhdGV3YXlzCi0gRXZhbHVhdGlvbiBwaXBlbGluZXMKLSBPYnNlcnZhYmlsaXR5Ci0gRXZlbnQtZHJpdmVuIHByb2Nlc3NpbmcKLSBUcmFkaXRpb25hbCBkZXRlcm1pbmlzdGljIHNlcnZpY2VzCgpUaGlzIGNyZWF0ZXMgYSBuZXcgY2hhbGxlbmdlIGZvciBhcmNoaXRlY3RzOgoKPiAqKkhvdyBkbyB3ZSBjaG9vc2UgdGhlIHJpZ2h0IEFJIGFyY2hpdGVjdHVyZSBwYXR0ZXJuIHdpdGhvdXQgbWFraW5nIHRoZSBzeXN0ZW0gdW5uZWNlc3NhcmlseSBjb21wbGV4PyoqCgpUaGUgYW5zd2VyIGlzIG5vdCB0byBzdGFydCB3aXRoIGEgZnJhbWV3b3JrIG9yIGFuIExMTS4KClN0YXJ0IHdpdGggdGhlICoqYnVzaW5lc3MgcHJvYmxlbSwgYXV0b25vbXkgcmVxdWlyZWQsIGtub3dsZWRnZSByZXF1aXJlZCwgd29ya2Zsb3cgY29tcGxleGl0eSwgcmlzaywgYW5kIG9wZXJhdGlvbmFsIHJlcXVpcmVtZW50cyoqLgoKVGhpcyBhcnRpY2xlIHByb3ZpZGVzIGEgcHJhY3RpY2FsIGNhdGFsb2cgb2YgdGhlIG1ham9yIEFJIGFyY2hpdGVjdHVyZSBwYXR0ZXJucyBhbmQgZXhwbGFpbnMgaG93IHRoZXkgZml0IHRvZ2V0aGVyLgoKLS0tCgojIDEuIEZpcnN0OiBXaGF0IElzIGFuIEFJIEFyY2hpdGVjdHVyZSBQYXR0ZXJuPwoKQW4gKipBSSBhcmNoaXRlY3R1cmUgcGF0dGVybioqIGlzIGEgcmV1c2FibGUgYXJjaGl0ZWN0dXJhbCBhcHByb2FjaCBmb3Igc29sdmluZyBhIHJlY3VycmluZyBwcm9ibGVtIGluIGFuIEFJLWVuYWJsZWQgc3lzdGVtLgoKSXQgZGVzY3JpYmVzIHRoaW5ncyBzdWNoIGFzOgoKLSBIb3cgaW50ZWxsaWdlbmNlIGlzIGludm9rZWQKLSBIb3cga25vd2xlZGdlIGlzIHByb3ZpZGVkCi0gSG93IHRhc2tzIGFyZSBkZWNvbXBvc2VkCi0gSG93IGRlY2lzaW9ucyBhcmUgbWFkZQotIEhvdyBBSSBjb21wb25lbnRzIGludGVyYWN0Ci0gSG93IHdvcmtmbG93cyBhcmUgY29udHJvbGxlZAotIEhvdyByZXN1bHRzIGFyZSB2YWxpZGF0ZWQKLSBIb3cgaHVtYW5zIHBhcnRpY2lwYXRlCi0gSG93IHRoZSBzeXN0ZW0gc2NhbGVzIGFuZCByZW1haW5zIHJlbGlhYmxlCgpUaGluayBvZiBwYXR0ZXJucyBhcyBhcmNoaXRlY3R1cmFsIGJ1aWxkaW5nIGJsb2Nrcy4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IExSCiAgICBBWyLwn46vIEJ1c2luZXNzIFByb2JsZW0iXSAtLT4gQlsi8J+nqSBBcmNoaXRlY3R1cmUgUGF0dGVybiJdCiAgICBCIC0tPiBDWyLwn6SWIEFJIENvbXBvbmVudHMiXQogICAgQyAtLT4gRFsi4pqZ77iPIFdvcmtmbG93Il0KICAgIEQgLS0+IEVbIvCfk4ogUHJvZHVjdGlvbiBTeXN0ZW0iXQoKICAgIGNsYXNzRGVmIHByb2JsZW0gZmlsbDojRkZFNEU2LHN0cm9rZTojRTExRDQ4LGNvbG9yOiMxMTE7CiAgICBjbGFzc0RlZiBwYXR0ZXJuIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNixjb2xvcjojMTExOwogICAgY2xhc3NEZWYgYWkgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCLGNvbG9yOiMxMTE7CiAgICBjbGFzc0RlZiB3b3JrZmxvdyBmaWxsOiNEQ0ZDRTcsc3Ryb2tlOiMxNkEzNEEsY29sb3I6IzExMTsKICAgIGNsYXNzRGVmIHByb2QgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVELGNvbG9yOiMxMTE7CgogICAgY2xhc3MgQSBwcm9ibGVtOwogICAgY2xhc3MgQiBwYXR0ZXJuOwogICAgY2xhc3MgQyBhaTsKICAgIGNsYXNzIEQgd29ya2Zsb3c7CiAgICBjbGFzcyBFIHByb2Q7CmBgYAoKVGhlIGtleSBwcmluY2lwbGUgaXM6Cgo+ICoqUGF0dGVybnMgYXJlIGNvbXBvc2FibGUuIFRoZXkgYXJlIG5vdCBtdXR1YWxseSBleGNsdXNpdmUuKioKCkEgcHJvZHVjdGlvbiBzeXN0ZW0gY2FuIHVzZToKCioqUkFHICsgUm91dGluZyArIEFnZW50ICsgVG9vbHMgKyBNZW1vcnkgKyBHdWFyZHJhaWxzICsgSHVtYW4gQXBwcm92YWwgKyBFdmFsdWF0aW9uICsgT2JzZXJ2YWJpbGl0eSoqCgotLS0KCiMgMi4gVGhlIENvbXBsZXRlIEFJIEFyY2hpdGVjdHVyZSBQYXR0ZXJuIExhbmRzY2FwZQoKQSB1c2VmdWwgYXJjaGl0ZWN0dXJlIHRheG9ub215IGlzIHRvIGRpdmlkZSBBSSBwYXR0ZXJucyBpbnRvIHNldmVuIG1ham9yIGdyb3Vwcy4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IFRCCgogICAgQUlbIvCfp6AgQUkgQVJDSElURUNUVVJFIFBBVFRFUk5TIl0KCiAgICBBSSAtLT4gUFsiMe+4j+KDoyBNT0RFTCAmIElORkVSRU5DRSJdCiAgICBBSSAtLT4gS1siMu+4j+KDoyBLTk9XTEVER0UgJiBHUk9VTkRJTkciXQogICAgQUkgLS0+IFdbIjPvuI/ig6MgV09SS0ZMT1cgJiBSRUFTT05JTkciXQogICAgQUkgLS0+IEFbIjTvuI/ig6MgQUdFTlQgJiBPUkNIRVNUUkFUSU9OIl0KICAgIEFJIC0tPiBJWyI177iP4oOjIERBVEEgJiBJTlRFR1JBVElPTiJdCiAgICBBSSAtLT4gUlsiNu+4j+KDoyBSRUxJQUJJTElUWSAmIENPTlRST0wiXQogICAgQUkgLS0+IE9bIjfvuI/ig6MgT1BFUkFUSU9OUyAmIEdPVkVSTkFOQ0UiXQoKICAgIFAgLS0+IFAxWyJEaXJlY3QgTW9kZWwgQ2FsbCJdCiAgICBQIC0tPiBQMlsiTW9kZWwgUm91dGluZyJdCiAgICBQIC0tPiBQM1siTW9kZWwgRmFsbGJhY2siXQogICAgUCAtLT4gUDRbIk1vZGVsIENhc2NhZGUiXQoKICAgIEsgLS0+IEsxWyJSQUciXQogICAgSyAtLT4gSzJbIkh5YnJpZCBTZWFyY2giXQogICAgSyAtLT4gSzNbIkdyYXBoUkFHIl0KICAgIEsgLS0+IEs0WyJBZ2VudGljIFJBRyJdCiAgICBLIC0tPiBLNVsiTWVtb3J5Il0KICAgIEsgLS0+IEs2WyJDb250ZXh0IEVuZ2luZWVyaW5nIl0KCiAgICBXIC0tPiBXMVsiUHJvbXB0IENoYWluaW5nIl0KICAgIFcgLS0+IFcyWyJSb3V0aW5nIl0KICAgIFcgLS0+IFczWyJQYXJhbGxlbGl6YXRpb24iXQogICAgVyAtLT4gVzRbIkNvbmRpdGlvbmFsIEJyYW5jaGluZyJdCiAgICBXIC0tPiBXNVsiRXZhbHVhdG9yLU9wdGltaXplciJdCiAgICBXIC0tPiBXNlsiUmVmbGVjdGlvbiJdCiAgICBXIC0tPiBXN1siUGxhbm5pbmciXQoKICAgIEEgLS0+IEExWyJTaW5nbGUgQWdlbnQiXQogICAgQSAtLT4gQTJbIlRvb2wtVXNpbmcgQWdlbnQiXQogICAgQSAtLT4gQTNbIk9yY2hlc3RyYXRvci1Xb3JrZXJzIl0KICAgIEEgLS0+IEE0WyJNdWx0aS1BZ2VudCJdCiAgICBBIC0tPiBBNVsiU2VxdWVudGlhbCJdCiAgICBBIC0tPiBBNlsiQ29uY3VycmVudCJdCiAgICBBIC0tPiBBN1siSGFuZG9mZiJdCiAgICBBIC0tPiBBOFsiR3JvdXAgQ2hhdCJdCiAgICBBIC0tPiBBOVsiTWFnZW50aWMiXQoKICAgIEkgLS0+IEkxWyJBUEkgLyBUb29sIENhbGxpbmciXQogICAgSSAtLT4gSTJbIk1DUCBJbnRlZ3JhdGlvbiJdCiAgICBJIC0tPiBJM1siRXZlbnQtRHJpdmVuIEFJIl0KICAgIEkgLS0+IEk0WyJIdW1hbi1pbi10aGUtTG9vcCJdCiAgICBJIC0tPiBJNVsiVHJhZGl0aW9uYWwgU29mdHdhcmUgKyBBSSJdCgogICAgUiAtLT4gUjFbIkd1YXJkcmFpbHMiXQogICAgUiAtLT4gUjJbIkF1dGhvcml6YXRpb24tQXdhcmUgUkFHIl0KICAgIFIgLS0+IFIzWyJDYWNoaW5nIl0KICAgIFIgLS0+IFI0WyJSZXRyeSAvIFJlY292ZXJ5Il0KICAgIFIgLS0+IFI1WyJTdGF0ZWZ1bCBFeGVjdXRpb24iXQoKICAgIE8gLS0+IE8xWyJFdmFsdWF0aW9uIl0KICAgIE8gLS0+IE8yWyJPYnNlcnZhYmlsaXR5Il0KICAgIE8gLS0+IE8zWyJBSSBHYXRld2F5Il0KICAgIE8gLS0+IE80WyJTZWN1cml0eSJdCiAgICBPIC0tPiBPNVsiR292ZXJuYW5jZSJdCiAgICBPIC0tPiBPNlsiQ29zdCBNYW5hZ2VtZW50Il0KCiAgICBjbGFzc0RlZiByb290IGZpbGw6IzdDM0FFRCxjb2xvcjojZmZmLHN0cm9rZTojNUIyMUI2OwogICAgY2xhc3NEZWYgbW9kZWwgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCLGNvbG9yOiMxMTE7CiAgICBjbGFzc0RlZiBrbm93bGVkZ2UgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBLGNvbG9yOiMxMTE7CiAgICBjbGFzc0RlZiB3b3JrZmxvdyBmaWxsOiNGRUYzQzcsc3Ryb2tlOiNEOTc3MDYsY29sb3I6IzExMTsKICAgIGNsYXNzRGVmIGFnZW50IGZpbGw6I0ZDRTdGMyxzdHJva2U6I0RCMjc3Nyxjb2xvcjojMTExOwogICAgY2xhc3NEZWYgaW50ZWdyYXRpb24gZmlsbDojRTBGMkZFLHN0cm9rZTojMDI4NEM3LGNvbG9yOiMxMTE7CiAgICBjbGFzc0RlZiByZWxpYWJpbGl0eSBmaWxsOiNGRkU0RTYsc3Ryb2tlOiNFMTFENDgsY29sb3I6IzExMTsKICAgIGNsYXNzRGVmIG9wZXJhdGlvbnMgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVELGNvbG9yOiMxMTE7CgogICAgY2xhc3MgQUkgcm9vdDsKICAgIGNsYXNzIFAsUDEsUDIsUDMsUDQgbW9kZWw7CiAgICBjbGFzcyBLLEsxLEsyLEszLEs0LEs1LEs2IGtub3dsZWRnZTsKICAgIGNsYXNzIFcsVzEsVzIsVzMsVzQsVzUsVzYsVzcgd29ya2Zsb3c7CiAgICBjbGFzcyBBLEExLEEyLEEzLEE0LEE1LEE2LEE3LEE4LEE5IGFnZW50OwogICAgY2xhc3MgSSxJMSxJMixJMyxJNCxJNSBpbnRlZ3JhdGlvbjsKICAgIGNsYXNzIFIsUjEsUjIsUjMsUjQsUjUgcmVsaWFiaWxpdHk7CiAgICBjbGFzcyBPLE8xLE8yLE8zLE80LE81LE82IG9wZXJhdGlvbnM7CmBgYAoKVGhpcyBpcyB0aGUgbWVudGFsIG1vZGVsIEkgcmVjb21tZW5kIHVzaW5nIGFzIGFuIEFJIEFyY2hpdGVjdC4KCi0tLQoKIyAzLiBQYXR0ZXJuICMxIOKAlCBEaXJlY3QgTW9kZWwgQ2FsbAoKVGhlIHNpbXBsZXN0IEFJIGFyY2hpdGVjdHVyZSBpcyBhIGRpcmVjdCBjYWxsIHRvIGEgbW9kZWwuCgpgYGBtZXJtYWlkCmZsb3djaGFydCBMUgogICAgVVsi8J+RpCBVc2VyIl0gLS0+IFBbIvCfk50gUHJvbXB0Il0KICAgIFAgLS0+IE1bIvCfp6AgTExNIC8gU0xNIl0KICAgIE0gLS0+IFJbIvCfkqwgUmVzcG9uc2UiXQoKICAgIGNsYXNzRGVmIHVzZXIgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgcHJvbXB0IGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIG1vZGVsIGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIHJlc3VsdCBmaWxsOiNEQ0ZDRTcsc3Ryb2tlOiMxNkEzNEE7CgogICAgY2xhc3MgVSB1c2VyOwogICAgY2xhc3MgUCBwcm9tcHQ7CiAgICBjbGFzcyBNIG1vZGVsOwogICAgY2xhc3MgUiByZXN1bHQ7CmBgYAoKVXNlIHRoaXMgZm9yOgoKLSBTdW1tYXJpemF0aW9uCi0gVHJhbnNsYXRpb24KLSBDbGFzc2lmaWNhdGlvbgotIFJld3JpdGluZwotIFNpbXBsZSBnZW5lcmF0aW9uCi0gRXh0cmFjdGlvbgotIEJhc2ljIFEmQQoKIyMjIEFyY2hpdGVjdHVyYWwgcHJpbmNpcGxlCgo+ICoqSWYgYSBzaW5nbGUgbW9kZWwgY2FsbCBzb2x2ZXMgdGhlIHByb2JsZW0sIGRvbid0IGJ1aWxkIGFuIGFnZW50LioqCgpDdXJyZW50IE1pY3Jvc29mdCBndWlkYW5jZSBleHBsaWNpdGx5IHJlY29tbWVuZHMgc3RhcnRpbmcgd2l0aCB0aGUgbGVhc3QgY29tcGxleCBhcmNoaXRlY3R1cmU6IGEgZGlyZWN0IG1vZGVsIGNhbGwgd2hlbiBwcm9tcHQgZW5naW5lZXJpbmcgaXMgc3VmZmljaWVudC4KCi0tLQoKIyA0LiBQYXR0ZXJuICMyIOKAlCBEZXRlcm1pbmlzdGljIEFJIFdvcmtmbG93CgpIZXJlIHRoZSBhcHBsaWNhdGlvbiBjb250cm9scyB0aGUgd29ya2Zsb3cuCgpgYGBtZXJtYWlkCmZsb3djaGFydCBMUgogICAgSVsiSW5wdXQiXSAtLT4gQVsiQUkgU3RlcCAxIl0KICAgIEEgLS0+IEJbIkJ1c2luZXNzIExvZ2ljIl0KICAgIEIgLS0+IENbIkFJIFN0ZXAgMiJdCiAgICBDIC0tPiBEWyJWYWxpZGF0aW9uIl0KICAgIEQgLS0+IE9bIk91dHB1dCJdCgogICAgY2xhc3NEZWYgaW8gZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgYWkgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgbG9naWMgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgdmFsaWRhdGUgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwoKICAgIGNsYXNzIEksTyBpbzsKICAgIGNsYXNzIEEsQyBhaTsKICAgIGNsYXNzIEIgbG9naWM7CiAgICBjbGFzcyBEIHZhbGlkYXRlOwpgYGAKClRoZSBMTE0gZG9lcyAqKm5vdCoqIGRlY2lkZSB0aGUgd29ya2Zsb3cuCgpUaGUgYXBwbGljYXRpb24gZG9lcy4KClRoaXMgaXMgaWRlYWwgZm9yOgoKLSBDb21wbGlhbmNlIHdvcmtmbG93cwotIERvY3VtZW50IHByb2Nlc3NpbmcKLSBLbm93biBidXNpbmVzcyBwcm9jZXNzZXMKLSBSZXBlYXRhYmxlIHBpcGVsaW5lcwotIEF1ZGl0YWJsZSBzeXN0ZW1zCgpEZXRlcm1pbmlzdGljIHdvcmtmbG93cyBwcm92aWRlIHByZWRpY3RhYmlsaXR5IGFuZCBhcmUgZ2VuZXJhbGx5IGVhc2llciB0byB0ZXN0IGFuZCBhdWRpdCB0aGFuIGF1dG9ub21vdXMgYWdlbnQgbG9vcHMuCgotLS0KCiMgNS4gUGF0dGVybiAjMyDigJQgUHJvbXB0IENoYWluaW5nCgpQcm9tcHQgY2hhaW5pbmcgZGVjb21wb3NlcyBhIGNvbXBsZXggdGFzayBpbnRvIHNlcXVlbnRpYWwgQUkgc3RlcHMuCgpgYGBtZXJtYWlkCmZsb3djaGFydCBMUgogICAgSVsi8J+TpSBJbnB1dCJdIC0tPiBBWyLwn6egIEFuYWx5emUiXQogICAgQSAtLT4gQlsi8J+TnSBHZW5lcmF0ZSJdCiAgICBCIC0tPiBDWyLwn5SNIFJldmlldyJdCiAgICBDIC0tPiBEWyLinKggSW1wcm92ZSJdCiAgICBEIC0tPiBPWyLwn5OkIE91dHB1dCJdCgogICAgY2xhc3NEZWYgaW5wdXQgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgc3RlcCBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiByZXZpZXcgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgb3V0cHV0IGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKCiAgICBjbGFzcyBJIGlucHV0OwogICAgY2xhc3MgQSxCLEQgc3RlcDsKICAgIGNsYXNzIEMgcmV2aWV3OwogICAgY2xhc3MgTyBvdXRwdXQ7CmBgYAoKRXhhbXBsZToKCioqUmVzZWFyY2gg4oaSIEV4dHJhY3Qg4oaSIEFuYWx5emUg4oaSIFN1bW1hcml6ZSoqCgpQcm9tcHQgY2hhaW5pbmcgaXMgcGFydGljdWxhcmx5IHVzZWZ1bCB3aGVuIGludGVybWVkaWF0ZSBvdXRwdXRzIGJlY29tZSBpbnB1dHMgdG8gbGF0ZXIgc3RhZ2VzLiBBV1MgZGVzY3JpYmVzIHRoaXMgcGF0dGVybiBhcyBzZXF1ZW50aWFsIGRlY29tcG9zaXRpb24gb2YgY29tcGxleCB0YXNrcyBpbnRvIGRpc2NyZXRlIExMTSBpbnZvY2F0aW9ucy4KCi0tLQoKIyA2LiBQYXR0ZXJuICM0IOKAlCBSb3V0aW5nCgpSb3V0aW5nIGRldGVybWluZXMgd2hpY2ggbW9kZWwsIHdvcmtmbG93LCB0b29sLCBvciBhZ2VudCBzaG91bGQgcHJvY2VzcyBhIHJlcXVlc3QuCgpgYGBtZXJtYWlkCmZsb3djaGFydCBMUgogICAgVVsi8J+RpCBSZXF1ZXN0Il0gLS0+IFJbIvCfmqYgQUkgUm91dGVyIl0KCiAgICBSIC0tPiBBWyLwn5K7IENvZGluZyJdCiAgICBSIC0tPiBCWyLwn5OaIEtub3dsZWRnZSJdCiAgICBSIC0tPiBDWyLwn5OKIEFuYWx5dGljcyJdCiAgICBSIC0tPiBEWyLwn6e+IERvY3VtZW50cyJdCiAgICBSIC0tPiBFWyLwn5Go4oCN8J+SvCBIdW1hbiJdCgogICAgY2xhc3NEZWYgaW5wdXQgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgcm91dGVyIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIHRhcmdldCBmaWxsOiNEQ0ZDRTcsc3Ryb2tlOiMxNkEzNEE7CiAgICBjbGFzc0RlZiBodW1hbiBmaWxsOiNGQ0U3RjMsc3Ryb2tlOiNEQjI3Nzc7CgogICAgY2xhc3MgVSBpbnB1dDsKICAgIGNsYXNzIFIgcm91dGVyOwogICAgY2xhc3MgQSxCLEMsRCB0YXJnZXQ7CiAgICBjbGFzcyBFIGh1bWFuOwpgYGAKClJvdXRpbmcgY2FuIGJlIGJhc2VkIG9uOgoKLSBJbnRlbnQKLSBDb21wbGV4aXR5Ci0gVXNlciB0eXBlCi0gRG9tYWluCi0gRGF0YSBzZW5zaXRpdml0eQotIE1vZGVsIGNhcGFiaWxpdHkKLSBDb3N0Ci0gTGF04oCLZW5jeQoKQVdTIGlkZW50aWZpZXMgcm91dGluZyBhcyBhIGNvcmUgd29ya2Zsb3cgcGF0dGVybiBmb3IgZGlzcGF0Y2hpbmcgcmVxdWVzdHMgdG8gc3BlY2lhbGl6ZWQgYWdlbnRzLCB3b3JrZmxvd3MsIG9yIHRvb2xzLgoKLS0tCgojIDcuIFBhdHRlcm4gIzUg4oCUIE1vZGVsIFJvdXRpbmcKClJvdXRpbmcgY2FuIGhhcHBlbiBzcGVjaWZpY2FsbHkgYmV0d2VlbiBtb2RlbHMuCgpgYGBtZXJtYWlkCmZsb3djaGFydCBMUgogICAgUVsiUmVxdWVzdCJdIC0tPiBSWyJNb2RlbCBSb3V0ZXIiXQoKICAgIFIgLS0+IFNbIuKaoSBTbWFsbCBNb2RlbCJdCiAgICBSIC0tPiBMWyLwn6egIExhcmdlIE1vZGVsIl0KICAgIFIgLS0+IENbIvCfkrsgQ29kaW5nIE1vZGVsIl0KICAgIFIgLS0+IFZbIvCfkYHvuI8gVmlzaW9uIE1vZGVsIl0KCiAgICBjbGFzc0RlZiBxIGZpbGw6I0RCRUFGRSxzdHJva2U6IzI1NjNFQjsKICAgIGNsYXNzRGVmIHJvdXRlciBmaWxsOiNGRUYzQzcsc3Ryb2tlOiNEOTc3MDY7CiAgICBjbGFzc0RlZiBtb2RlbCBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CgogICAgY2xhc3MgUSBxOwogICAgY2xhc3MgUiByb3V0ZXI7CiAgICBjbGFzcyBTLEwsQyxWIG1vZGVsOwpgYGAKClRoZSBvYmplY3RpdmUgaXM6Cgo+ICoqVXNlIHRoZSBjaGVhcGVzdCBhbmQgZmFzdGVzdCBtb2RlbCBjYXBhYmxlIG9mIHNvbHZpbmcgdGhlIHRhc2suKioKClRoaXMgYmVjb21lcyBpbmNyZWFzaW5nbHkgaW1wb3J0YW50IGluIGVudGVycHJpc2UgQUkgcGxhdGZvcm1zLgoKLS0tCgojIDguIFBhdHRlcm4gIzYg4oCUIE1vZGVsIENhc2NhZGUKCk1vZGVsIGNhc2NhZGUgaXMgcmVsYXRlZCB0byByb3V0aW5nIGJ1dCB1c2VzIHByb2dyZXNzaXZlIGVzY2FsYXRpb24uCgpgYGBtZXJtYWlkCmZsb3djaGFydCBURAogICAgUVsiUmVxdWVzdCJdIC0tPiBTWyLimqEgU21hbGwgTW9kZWwiXQogICAgUyAtLT58Q29uZmlkZW5jZSBIaWdofCBPWyLinIUgQW5zd2VyIl0KICAgIFMgLS0+fENvbmZpZGVuY2UgTG93fCBMWyLwn6egIExhcmdlIE1vZGVsIl0KICAgIEwgLS0+IE8KCiAgICBjbGFzc0RlZiBxIGZpbGw6I0RCRUFGRSxzdHJva2U6IzI1NjNFQjsKICAgIGNsYXNzRGVmIHNtYWxsIGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKICAgIGNsYXNzRGVmIGxhcmdlIGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIG91dHB1dCBmaWxsOiNGRUYzQzcsc3Ryb2tlOiNEOTc3MDY7CgogICAgY2xhc3MgUSBxOwogICAgY2xhc3MgUyBzbWFsbDsKICAgIGNsYXNzIEwgbGFyZ2U7CiAgICBjbGFzcyBPIG91dHB1dDsKYGBgCgpUaGlzIGNhbiByZWR1Y2U6CgotIENvc3QKLSBMYXRlbmN5Ci0gTGFyZ2UtbW9kZWwgdXRpbGl6YXRpb24KCi0tLQoKIyA5LiBQYXR0ZXJuICM3IOKAlCBQYXJhbGxlbGl6YXRpb24KCkluZGVwZW5kZW50IHRhc2tzIGNhbiBleGVjdXRlIHNpbXVsdGFuZW91c2x5LgoKYGBgbWVybWFpZApmbG93Y2hhcnQgTFIKICAgIElbIvCfk6UgUmVxdWVzdCJdIC0tPiBBWyJBZ2VudCBBIl0KICAgIEkgLS0+IEJbIkFnZW50IEIiXQogICAgSSAtLT4gQ1siQWdlbnQgQyJdCgogICAgQSAtLT4gTVsi8J+UgCBNZXJnZSJdCiAgICBCIC0tPiBNCiAgICBDIC0tPiBNCgogICAgTSAtLT4gT1si8J+TpCBSZXN1bHQiXQoKICAgIGNsYXNzRGVmIGlucHV0IGZpbGw6I0RCRUFGRSxzdHJva2U6IzI1NjNFQjsKICAgIGNsYXNzRGVmIGFnZW50cyBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiBtZXJnZSBmaWxsOiNGRUYzQzcsc3Ryb2tlOiNEOTc3MDY7CiAgICBjbGFzc0RlZiBvdXRwdXQgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwoKICAgIGNsYXNzIEkgaW5wdXQ7CiAgICBjbGFzcyBBLEIsQyBhZ2VudHM7CiAgICBjbGFzcyBNIG1lcmdlOwogICAgY2xhc3MgTyBvdXRwdXQ7CmBgYAoKQWxzbyBjYWxsZWQ6CgotIFBhcmFsbGVsaXphdGlvbgotIEZhbi1vdXQgLyBmYW4taW4KLSBTY2F0dGVyLWdhdGhlcgotIE1hcC1yZWR1Y2UKClVzZSBpdCB3aGVuIHRhc2tzIGFyZSBpbmRlcGVuZGVudC4KCk1pY3Jvc29mdCBhbmQgQVdTIGJvdGggZG9jdW1lbnQgcGFyYWxsZWwvY29uY3VycmVudCBwcm9jZXNzaW5nIGFzIGEgbWFqb3IgQUkgd29ya2Zsb3cgcGF0dGVybi4KCi0tLQoKIyAxMC4gUGF0dGVybiAjOCDigJQgQ29uZGl0aW9uYWwgQnJhbmNoaW5nCgpOb3QgZXZlcnkgcmVxdWVzdCBmb2xsb3dzIHRoZSBzYW1lIHBhdGguCgpgYGBtZXJtYWlkCmZsb3djaGFydCBURAogICAgSVsiUmVxdWVzdCJdIC0tPiBEeyJEZWNpc2lvbiJ9CgogICAgRCAtLT58VHlwZSBBfCBBWyJXb3JrZmxvdyBBIl0KICAgIEQgLS0+fFR5cGUgQnwgQlsiV29ya2Zsb3cgQiJdCiAgICBEIC0tPnxUeXBlIEN8IENbIldvcmtmbG93IEMiXQoKICAgIEEgLS0+IE9bIk91dHB1dCJdCiAgICBCIC0tPiBPCiAgICBDIC0tPiBPCgogICAgY2xhc3NEZWYgaW5wdXQgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgZGVjaXNpb24gZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgZmxvdyBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiBvdXRwdXQgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwoKICAgIGNsYXNzIEkgaW5wdXQ7CiAgICBjbGFzcyBEIGRlY2lzaW9uOwogICAgY2xhc3MgQSxCLEMgZmxvdzsKICAgIGNsYXNzIE8gb3V0cHV0OwpgYGAKClRoaXMgaXMgdXNlZnVsIGZvcjoKCi0gUmlzayBjbGFzc2lmaWNhdGlvbgotIFN1cHBvcnQgdHJpYWdlCi0gRG9jdW1lbnQgY2xhc3NpZmljYXRpb24KLSBBSS1hc3Npc3RlZCBidXNpbmVzcyB3b3JrZmxvd3MKCi0tLQoKIyAxMS4gUGF0dGVybiAjOSDigJQgRXZhbHVhdG9yLU9wdGltaXplcgoKT25lIG1vZGVsIGdlbmVyYXRlcyBhbiBhbnN3ZXIuCgpBbm90aGVyIHByb2Nlc3MgZXZhbHVhdGVzIGl0LgoKYGBgbWVybWFpZApmbG93Y2hhcnQgTFIKICAgIEdbIvCfp6AgR2VuZXJhdG9yIl0gLS0+IE9bIvCfk4QgT3V0cHV0Il0KICAgIE8gLS0+IEVbIvCflI0gRXZhbHVhdG9yIl0KICAgIEUgLS0+fEZhaWx8IEcKICAgIEUgLS0+fFBhc3N8IEZbIuKchSBGaW5hbCJdCgogICAgY2xhc3NEZWYgZ2VuIGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIG91dHB1dCBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiBldmFsIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIGZpbmFsIGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKCiAgICBjbGFzcyBHIGdlbjsKICAgIGNsYXNzIE8gb3V0cHV0OwogICAgY2xhc3MgRSBldmFsOwogICAgY2xhc3MgRiBmaW5hbDsKYGBgCgpBbHNvIGtub3duIGFzOgoKLSBHZW5lcmF0b3ItdmVyaWZpZXIKLSBNYWtlci1jaGVja2VyCi0gQ3JpdGljIGxvb3AKLSBSZWZsZWN0LXJlZmluZQotIEV2YWx1YXRvci1vcHRpbWl6ZXIKCk1pY3Jvc29mdCBleHBsaWNpdGx5IGlkZW50aWZpZXMgbWFrZXItY2hlY2tlciBsb29wcyBhcyBldmFsdWF0b3Itb3B0aW1pemVyIC8gZ2VuZXJhdG9yLXZlcmlmaWVyIC8gcmVmbGVjdGlvbiBsb29wcy4KCi0tLQoKIyAxMi4gUGF0dGVybiAjMTAg4oCUIFJlZmxlY3Rpb24gLyBTZWxmLUNvcnJlY3Rpb24KClRoZSBBSSBldmFsdWF0ZXMgaXRzIG93biBvdXRwdXQgYW5kIGltcHJvdmVzIGl0LgoKYGBgbWVybWFpZApmbG93Y2hhcnQgTFIKICAgIEFbIkdlbmVyYXRlIl0gLS0+IEJbIlJlZmxlY3QiXQogICAgQiAtLT4gQ3siR29vZD8ifQogICAgQyAtLT58Tm98IERbIkltcHJvdmUiXQogICAgRCAtLT4gQQogICAgQyAtLT58WWVzfCBFWyJGaW5hbCJdCgogICAgY2xhc3NEZWYgZ2VuIGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIHJlZmxlY3QgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgZGVjaXNpb24gZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgZmluYWwgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwoKICAgIGNsYXNzIEEsRCBnZW47CiAgICBjbGFzcyBCIHJlZmxlY3Q7CiAgICBjbGFzcyBDIGRlY2lzaW9uOwogICAgY2xhc3MgRSBmaW5hbDsKYGBgCgpVc2VmdWwgZm9yOgoKLSBDb2RlIHJldmlldwotIEFyY2hpdGVjdHVyZSByZXZpZXcKLSBSZXNlYXJjaAotIENvbnRlbnQgZ2VuZXJhdGlvbgotIFJBRyBxdWFsaXR5IGltcHJvdmVtZW50CgpBbHdheXMgaW1wb3NlIGFuIGl0ZXJhdGlvbiBsaW1pdC4KCi0tLQoKIyAxMy4gUGF0dGVybiAjMTEg4oCUIFBsYW5uaW5nCgpDb21wbGV4IHRhc2tzIGNhbiBiZSBkZWNvbXBvc2VkIGludG8gYSBwbGFuIGJlZm9yZSBleGVjdXRpb24uCgpgYGBtZXJtYWlkCmZsb3djaGFydCBURAogICAgR1si8J+OryBHb2FsIl0gLS0+IFBbIvCfp6AgUGxhbm5lciJdCiAgICBQIC0tPiBUMVsiVGFzayAxIl0KICAgIFAgLS0+IFQyWyJUYXNrIDIiXQogICAgUCAtLT4gVDNbIlRhc2sgMyJdCgogICAgVDEgLS0+IEVbIkV4ZWN1dGlvbiJdCiAgICBUMiAtLT4gRQogICAgVDMgLS0+IEUKCiAgICBFIC0tPiBWWyJWYWxpZGF0aW9uIl0KICAgIFYgLS0+IE9bIk91dGNvbWUiXQoKICAgIGNsYXNzRGVmIGdvYWwgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgcGxhbm5lciBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiB0YXNrcyBmaWxsOiNGRUYzQzcsc3Ryb2tlOiNEOTc3MDY7CiAgICBjbGFzc0RlZiBleGVjIGZpbGw6I0UwRjJGRSxzdHJva2U6IzAyODRDNzsKICAgIGNsYXNzRGVmIHJlc3VsdCBmaWxsOiNEQ0ZDRTcsc3Ryb2tlOiMxNkEzNEE7CgogICAgY2xhc3MgRyBnb2FsOwogICAgY2xhc3MgUCBwbGFubmVyOwogICAgY2xhc3MgVDEsVDIsVDMgdGFza3M7CiAgICBjbGFzcyBFIGV4ZWM7CiAgICBjbGFzcyBWLE8gcmVzdWx0OwpgYGAKClBsYW5uaW5nIGlzIHVzZWZ1bCB3aGVuIHRoZSB0YXNrIGlzIG9wZW4tZW5kZWQgb3IgaGFzIG11bHRpcGxlIGRlcGVuZGVuY2llcy4KCi0tLQoKIyAxNC4gUGF0dGVybiAjMTIg4oCUIE9yY2hlc3RyYXRvci1Xb3JrZXJzCgpBIG1hbmFnZXIgY3JlYXRlcyB0YXNrcyBkeW5hbWljYWxseSBhbmQgZGVsZWdhdGVzIHRoZW0gdG8gc3BlY2lhbGl6ZWQgd29ya2Vycy4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IFRECiAgICBHWyLwn46vIEdvYWwiXSAtLT4gTVsi8J+noCBPcmNoZXN0cmF0b3IiXQoKICAgIE0gLS0+IEFbIldvcmtlciBBIl0KICAgIE0gLS0+IEJbIldvcmtlciBCIl0KICAgIE0gLS0+IENbIldvcmtlciBDIl0KCiAgICBBIC0tPiBSWyJSZXN1bHRzIl0KICAgIEIgLS0+IFIKICAgIEMgLS0+IFIKCiAgICBSIC0tPiBNCiAgICBNIC0tPiBGWyLinIUgRmluYWwiXQoKICAgIGNsYXNzRGVmIGdvYWwgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgbWFuYWdlciBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiB3b3JrZXIgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwogICAgY2xhc3NEZWYgcmVzdWx0IGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKCiAgICBjbGFzcyBHIGdvYWw7CiAgICBjbGFzcyBNIG1hbmFnZXI7CiAgICBjbGFzcyBBLEIsQyB3b3JrZXI7CiAgICBjbGFzcyBSLEYgcmVzdWx0OwpgYGAKClVubGlrZSBhIGZpeGVkIHBpcGVsaW5lLCB0aGUgb3JjaGVzdHJhdG9yIGR5bmFtaWNhbGx5IGRlY2lkZXM6CgotIFdoaWNoIHRhc2tzIGFyZSBuZWVkZWQKLSBXaGljaCB3b3JrZXIgcGVyZm9ybXMgdGhlbQotIFdoYXQgb3JkZXIgdGhleSBleGVjdXRlCi0gV2hldGhlciBhZGRpdGlvbmFsIHdvcmsgaXMgbmVjZXNzYXJ5CgotLS0KCiMgMTUuIFBhdHRlcm4gIzEzIOKAlCBTaW5nbGUgQWdlbnQKCkFuIGFnZW50IGNhbiByZWFzb24sIHNlbGVjdCB0b29scywgYW5kIGV4ZWN1dGUgbXVsdGlwbGUgc3RlcHMuCgpgYGBtZXJtYWlkCmZsb3djaGFydCBMUgogICAgVVsi8J+RpCBVc2VyIl0gLS0+IEFbIvCfpJYgQWdlbnQiXQoKICAgIEEgLS0+IFQxWyLwn5SOIFNlYXJjaCJdCiAgICBBIC0tPiBUMlsi8J+XhO+4jyBEYXRhYmFzZSJdCiAgICBBIC0tPiBUM1si4pqZ77iPIEFQSSJdCiAgICBBIC0tPiBUNFsi8J+TmiBLbm93bGVkZ2UiXQoKICAgIFQxIC0tPiBBCiAgICBUMiAtLT4gQQogICAgVDMgLS0+IEEKICAgIFQ0IC0tPiBBCgogICAgQSAtLT4gT1si8J+TpCBSZXN1bHQiXQoKICAgIGNsYXNzRGVmIHVzZXIgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgYWdlbnQgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgdG9vbCBmaWxsOiNEQ0ZDRTcsc3Ryb2tlOiMxNkEzNEE7CiAgICBjbGFzc0RlZiBvdXRwdXQgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwoKICAgIGNsYXNzIFUgdXNlcjsKICAgIGNsYXNzIEEgYWdlbnQ7CiAgICBjbGFzcyBUMSxUMixUMyxUNCB0b29sOwogICAgY2xhc3MgTyBvdXRwdXQ7CmBgYAoKQSBzaW5nbGUgYWdlbnQgaXMgb2Z0ZW4gdGhlIGJlc3Qgc3RhcnRpbmcgcG9pbnQgZm9yIGFnZW50aWMgYXBwbGljYXRpb25zLgoKTWljcm9zb2Z0J3MgY3VycmVudCBndWlkYW5jZSBleHBsaWNpdGx5IG5vdGVzIHRoYXQgYSBzaW5nbGUgYWdlbnQgd2l0aCBtdWx0aXBsZSB0b29scyBpcyBvZnRlbiBwcmVmZXJhYmxlIHRvIGltbWVkaWF0ZWx5IGludHJvZHVjaW5nIG11bHRpLWFnZW50IGNvbXBsZXhpdHkuCgotLS0KCiMgMTYuIFBhdHRlcm4gIzE0IOKAlCBUb29sLVVzaW5nIEFnZW50CgpUaGUgYWdlbnQgZHluYW1pY2FsbHkgc2VsZWN0cyB0b29scy4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IFRECiAgICBVWyJVc2VyIl0gLS0+IEFbIkFnZW50Il0KICAgIEEgLS0+IER7IldoaWNoIFRvb2w/In0KCiAgICBEIC0tPiBTWyJTZWFyY2giXQogICAgRCAtLT4gREJbIkRhdGFiYXNlIl0KICAgIEQgLS0+IEFQSVsiQVBJIl0KICAgIEQgLS0+IENbIkNhbGN1bGF0b3IiXQoKICAgIFMgLS0+IEEKICAgIERCIC0tPiBBCiAgICBBUEkgLS0+IEEKICAgIEMgLS0+IEEKCiAgICBBIC0tPiBPWyJBbnN3ZXIgLyBBY3Rpb24iXQoKICAgIGNsYXNzRGVmIHVzZXIgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgYWdlbnQgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgZGVjaXNpb24gZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgdG9vbHMgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwogICAgY2xhc3NEZWYgb3V0cHV0IGZpbGw6I0UwRjJGRSxzdHJva2U6IzAyODRDNzsKCiAgICBjbGFzcyBVIHVzZXI7CiAgICBjbGFzcyBBIGFnZW50OwogICAgY2xhc3MgRCBkZWNpc2lvbjsKICAgIGNsYXNzIFMsREIsQVBJLEMgdG9vbHM7CiAgICBjbGFzcyBPIG91dHB1dDsKYGBgCgpUaGlzIGlzIG9uZSBvZiB0aGUgZnVuZGFtZW50YWwgYnVpbGRpbmcgYmxvY2tzIG9mIG1vZGVybiBhZ2VudHMuCgotLS0KCiMgMTcuIFBhdHRlcm4gIzE1IOKAlCBSQUcKClJBRyBzZXBhcmF0ZXMgbW9kZWwgaW50ZWxsaWdlbmNlIGZyb20gZW50ZXJwcmlzZSBrbm93bGVkZ2UuCgpgYGBtZXJtYWlkCmZsb3djaGFydCBMUgogICAgRFsi8J+ThCBEb2N1bWVudHMiXSAtLT4gSVsiSW5nZXN0aW9uIl0KICAgIEkgLS0+IENbIkNodW5raW5nIl0KICAgIEMgLS0+IEVbIkVtYmVkZGluZ3MiXQogICAgRSAtLT4gVlsi8J+UjiBTZWFyY2ggSW5kZXgiXQoKICAgIFVbIvCfkaQgUXVlcnkiXSAtLT4gU1siUmV0cmlldmVyIl0KICAgIFYgLS0+IFMKICAgIFMgLS0+IFhbIlJlbGV2YW50IENvbnRleHQiXQogICAgWCAtLT4gTFsi8J+noCBMTE0iXQogICAgVSAtLT4gTAogICAgTCAtLT4gT1siR3JvdW5kZWQgQW5zd2VyIl0KCiAgICBjbGFzc0RlZiBkYXRhIGZpbGw6I0RCRUFGRSxzdHJva2U6IzI1NjNFQjsKICAgIGNsYXNzRGVmIHByb2Nlc3MgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgaW5kZXggZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwogICAgY2xhc3NEZWYgbW9kZWwgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgb3V0cHV0IGZpbGw6I0UwRjJGRSxzdHJva2U6IzAyODRDNzsKCiAgICBjbGFzcyBELFUgZGF0YTsKICAgIGNsYXNzIEksQyxTLFggcHJvY2VzczsKICAgIGNsYXNzIEUsViBpbmRleDsKICAgIGNsYXNzIEwgbW9kZWw7CiAgICBjbGFzcyBPIG91dHB1dDsKYGBgCgpSQUcgaXMgYW4gYXJjaGl0ZWN0dXJlIHBhdHRlcm4gZm9yIGdyb3VuZGluZyBtb2RlbCByZXNwb25zZXMgaW4gZXh0ZXJuYWwgb3IgcHJvcHJpZXRhcnkgaW5mb3JtYXRpb24uIE1pY3Jvc29mdCBkZXNjcmliZXMgaXQgYXMgYW4gaW5kdXN0cnktc3RhbmRhcmQgcGF0dGVybiBmb3IgYXBwbGljYXRpb25zIHRoYXQgbmVlZCBzcGVjaWZpYyBvciBwcm9wcmlldGFyeSBkYXRhLgoKLS0tCgojIDE4LiBSQUcgSXMgTm90IE9uZSBQYXR0ZXJuCgpSQUcgaXRzZWxmIGhhcyBldm9sdmVkIGludG8gc2V2ZXJhbCBhcmNoaXRlY3R1cmUgcGF0dGVybnMuCgojIyBOYWl2ZSAvIFN0YW5kYXJkIFJBRwoKYGBgdGV4dApRdWVyeSDihpIgUmV0cmlldmUg4oaSIENvbnRleHQg4oaSIExMTSDihpIgQW5zd2VyCmBgYAoKIyMgSHlicmlkIFJBRwoKYGBgdGV4dApRdWVyeQog4pSc4pSA4pSAIEtleXdvcmQgU2VhcmNoCiDilJTilIDilIAgVmVjdG9yIFNlYXJjaAogICAgICAgICAg4oaTCiAgICAgICBSZXJhbmtlcgogICAgICAgICAg4oaTCiAgICAgICAgIExMTQpgYGAKCiMjIEdyYXBoUkFHCgpgYGB0ZXh0ClF1ZXJ5CiAg4oaTCkVudGl0eSAvIFJlbGF0aW9uc2hpcCBSZXRyaWV2YWwKICDihpMKS25vd2xlZGdlIEdyYXBoCiAg4oaTCkxMTQpgYGAKCiMjIEFnZW50aWMgUkFHCgpgYGB0ZXh0ClF1ZXJ5CiAg4oaTCkFnZW50CiAg4pSc4pSA4pSAIFNlYXJjaAogIOKUnOKUgOKUgCBSZS1zZWFyY2gKICDilJzilIDilIAgRGF0YWJhc2UKICDilJzilIDilIAgQVBJCiAg4pSU4pSA4pSAIEtub3dsZWRnZSBHcmFwaAogICAgICAgICAg4oaTCiAgICAgICAgTExNCmBgYAoKIyMgU2VsZi1SZWZsZWN0aXZlIFJBRwoKYGBgdGV4dApSZXRyaWV2ZQogICDihpMKR2VuZXJhdGUKICAg4oaTCkV2YWx1YXRlCiAgIOKGkwpFbm91Z2g/CiDilIzilIDilLTilIDilJAKTm8gIFllcwrilIIgICAg4pSCCuKUlOKUgOKWulJldHJpZXZlCiAgICAgYWdhaW4KYGBgCgpNaWNyb3NvZnQncyBjdXJyZW50IFJBRyBndWlkYW5jZSBleHBsaWNpdGx5IGRpc2N1c3NlcyBzdGFuZGFyZCBSQUcsIGFnZW50aWMgUkFHLCBHcmFwaFJBRy1zdHlsZSByZXRyaWV2YWwsIGFuZCBzZWxmLXJlZmxlY3RpdmUgYXBwcm9hY2hlcy4KCi0tLQoKIyAxOS4gUGF0dGVybiAjMTYg4oCUIEFnZW50aWMgUkFHCgpBZ2VudGljIFJBRyBjb21iaW5lcyByZXRyaWV2YWwgd2l0aCBhZ2VudCByZWFzb25pbmcuCgpgYGBtZXJtYWlkCmZsb3djaGFydCBURAogICAgUVsi8J+RpCBRdWVyeSJdIC0tPiBBWyLwn6SWIEFnZW50Il0KICAgIEEgLS0+IFNbIvCflI4gU2VhcmNoIl0KICAgIFMgLS0+IFJbIlJldHJpZXZlZCBEYXRhIl0KICAgIFIgLS0+IEEKCiAgICBBIC0tPiBEWyLwn5eE77iPIERhdGFiYXNlIl0KICAgIEQgLS0+IEEKCiAgICBBIC0tPiBBUElbIvCfjJAgQVBJIl0KICAgIEFQSSAtLT4gQQoKICAgIEEgLS0+IEN7IkVub3VnaCBDb250ZXh0PyJ9CgogICAgQyAtLT58Tm98IEEKICAgIEMgLS0+fFllc3wgTFsi8J+noCBMTE0iXQogICAgTCAtLT4gT1siQW5zd2VyIl0KCiAgICBjbGFzc0RlZiBxdWVyeSBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiBhZ2VudCBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiB0b29sIGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKICAgIGNsYXNzRGVmIGRlY2lzaW9uIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIG91dHB1dCBmaWxsOiNFMEYyRkUsc3Ryb2tlOiMwMjg0Qzc7CgogICAgY2xhc3MgUSBxdWVyeTsKICAgIGNsYXNzIEEsTCBhZ2VudDsKICAgIGNsYXNzIFMsUixELEFQSSB0b29sOwogICAgY2xhc3MgQyBkZWNpc2lvbjsKICAgIGNsYXNzIE8gb3V0cHV0OwpgYGAKCkFnZW50aWMgUkFHIGlzIGFwcHJvcHJpYXRlIHdoZW4gcmV0cmlldmFsIGl0c2VsZiByZXF1aXJlcyBkeW5hbWljIHJlYXNvbmluZywgbXVsdGlwbGUgc2VhcmNoZXMsIHF1ZXJ5IGRlY29tcG9zaXRpb24sIG9yIGNvbWJpbmluZyByZXRyaWV2YWwgd2l0aCBhY3Rpb25zLgoKLS0tCgojIDIwLiBQYXR0ZXJuICMxNyDigJQgTWVtb3J5CgpNZW1vcnkgYWxsb3dzIEFJIGFwcGxpY2F0aW9ucyB0byBtYWludGFpbiBzdGF0ZSBiZXlvbmQgYSBzaW5nbGUgbW9kZWwgY2FsbC4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IExSCiAgICBVWyJVc2VyIl0gLS0+IEFbIkFnZW50Il0KCiAgICBBIDwtLT4gU1siU2hvcnQtVGVybSBNZW1vcnkiXQogICAgQSA8LS0+IExbIkxvbmctVGVybSBNZW1vcnkiXQogICAgQSA8LS0+IEVbIkVwaXNvZGljIE1lbW9yeSJdCiAgICBBIDwtLT4gS1siU2VtYW50aWMgTWVtb3J5Il0KCiAgICBBIC0tPiBPWyJSZXNwb25zZSJdCgogICAgY2xhc3NEZWYgdXNlciBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiBhZ2VudCBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiBtZW1vcnkgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwogICAgY2xhc3NEZWYgb3V0cHV0IGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKCiAgICBjbGFzcyBVIHVzZXI7CiAgICBjbGFzcyBBIGFnZW50OwogICAgY2xhc3MgUyxMLEUsSyBtZW1vcnk7CiAgICBjbGFzcyBPIG91dHB1dDsKYGBgCgpNZW1vcnkgY2FuIGluY2x1ZGU6CgotIENvbnZlcnNhdGlvbiBzdGF0ZQotIFVzZXIgcHJlZmVyZW5jZXMKLSBQcmV2aW91cyB0YXNrcwotIEZhY3RzCi0gRGVjaXNpb25zCi0gTG9uZy10ZXJtIGtub3dsZWRnZQotIEFnZW50IHN0YXRlCgpBV1MgZGVzY3JpYmVzIGFnZW50IG1lbW9yeSB1c2luZyBleHRlcm5hbCBzdG9yZXMsIFJBRywgaW4tY29udGV4dCBpbmZvcm1hdGlvbiwgYW5kIHBlcnNpc3RlbnQgYWdlbnQgc3RhdGUuCgotLS0KCiMgMjEuIFBhdHRlcm4gIzE4IOKAlCBDb250ZXh0IEVuZ2luZWVyaW5nCgpDb250ZXh0IGVuZ2luZWVyaW5nIGRldGVybWluZXMgKip3aGF0IGluZm9ybWF0aW9uIHJlYWNoZXMgdGhlIG1vZGVsKiouCgpgYGBtZXJtYWlkCmZsb3djaGFydCBUQgogICAgVVsiVXNlciBSZXF1ZXN0Il0gLS0+IENbIvCfp6kgQ29udGV4dCBCdWlsZGVyIl0KCiAgICBIWyJDb252ZXJzYXRpb24gSGlzdG9yeSJdIC0tPiBDCiAgICBSWyJSZXRyaWV2ZWQgS25vd2xlZGdlIl0gLS0+IEMKICAgIE1bIk1lbW9yeSJdIC0tPiBDCiAgICBUWyJUb29sIFJlc3VsdHMiXSAtLT4gQwogICAgUFsiUG9saWNpZXMiXSAtLT4gQwogICAgQlsiQnVzaW5lc3MgUnVsZXMiXSAtLT4gQwoKICAgIEMgLS0+IExbIvCfp6AgTExNIl0KICAgIEwgLS0+IE9bIk91dHB1dCJdCgogICAgY2xhc3NEZWYgc291cmNlIGZpbGw6I0RCRUFGRSxzdHJva2U6IzI1NjNFQjsKICAgIGNsYXNzRGVmIGNvbnRleHQgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgbW9kZWwgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgb3V0cHV0IGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKCiAgICBjbGFzcyBVLEgsUixNLFQsUCxCIHNvdXJjZTsKICAgIGNsYXNzIEMgY29udGV4dDsKICAgIGNsYXNzIEwgbW9kZWw7CiAgICBjbGFzcyBPIG91dHB1dDsKYGBgCgpUaGlzIGlzIGJyb2FkZXIgdGhhbiBwcm9tcHQgZW5naW5lZXJpbmcuCgpUaGUgYXJjaGl0ZWN0IGNvbnRyb2xzOgoKLSBXaGF0IGNvbnRleHQgaXMgcmV0cmlldmVkCi0gSG93IG11Y2ggY29udGV4dCBpcyBpbmNsdWRlZAotIFdoaWNoIHNvdXJjZXMgYXJlIHRydXN0ZWQKLSBIb3cgY29udGV4dCBpcyBwcmlvcml0aXplZAotIFdoYXQgZ2V0cyByZW1vdmVkCi0gV2hhdCBnZXRzIHN1bW1hcml6ZWQKCi0tLQoKIyAyMi4gUGF0dGVybiAjMTkg4oCUIEtub3dsZWRnZSBSb3V0aW5nCgpFbnRlcnByaXNlIGtub3dsZWRnZSBpcyBvZnRlbiBkaXN0cmlidXRlZC4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IExSCiAgICBRWyJRdWVyeSJdIC0tPiBSWyJLbm93bGVkZ2UgUm91dGVyIl0KCiAgICBSIC0tPiBDWyJDb25mbHVlbmNlIl0KICAgIFIgLS0+IEdbIkdpdCJdCiAgICBSIC0tPiBTWyJTaGFyZVBvaW50Il0KICAgIFIgLS0+IERCWyJEYXRhYmFzZXMiXQogICAgUiAtLT4gV1siV2ViIl0KCiAgICBDIC0tPiBNWyJNZXJnZSJdCiAgICBHIC0tPiBNCiAgICBTIC0tPiBNCiAgICBEQiAtLT4gTQogICAgVyAtLT4gTQoKICAgIE0gLS0+IExbIkxMTSJdCgogICAgY2xhc3NEZWYgcSBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiByb3V0ZXIgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgc291cmNlIGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKICAgIGNsYXNzRGVmIG1vZGVsIGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKCiAgICBjbGFzcyBRIHE7CiAgICBjbGFzcyBSIHJvdXRlcjsKICAgIGNsYXNzIEMsRyxTLERCLFcgc291cmNlOwogICAgY2xhc3MgTSxMIG1vZGVsOwpgYGAKClRoaXMgcGF0dGVybiBpcyB2YWx1YWJsZSBpbiBlbnRlcnByaXNlIGVudmlyb25tZW50cyB3aGVyZSBpbmZvcm1hdGlvbiBpcyBmcmFnbWVudGVkIGFjcm9zcyBtYW55IHN5c3RlbXMuCgotLS0KCiMgMjMuIFBhdHRlcm4gIzIwIOKAlCBNdWx0aS1BZ2VudCBBcmNoaXRlY3R1cmUKCk11bHRpcGxlIHNwZWNpYWxpemVkIGFnZW50cyBjb2xsYWJvcmF0ZS4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IFRECiAgICBVWyLwn5GkIFVzZXIiXSAtLT4gT1si8J+OryBPcmNoZXN0cmF0b3IiXQoKICAgIE8gLS0+IEFbIvCflJAgU2VjdXJpdHkgQWdlbnQiXQogICAgTyAtLT4gQlsi4piB77iPIENsb3VkIEFnZW50Il0KICAgIE8gLS0+IENbIvCfkrAgQ29zdCBBZ2VudCJdCiAgICBPIC0tPiBEWyLimpnvuI8gRGV2T3BzIEFnZW50Il0KCiAgICBBIC0tPiBSWyJBZ2dyZWdhdGlvbiJdCiAgICBCIC0tPiBSCiAgICBDIC0tPiBSCiAgICBEIC0tPiBSCgogICAgUiAtLT4gRlsiRmluYWwgUmVjb21tZW5kYXRpb24iXQoKICAgIGNsYXNzRGVmIHVzZXIgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgb3JjaCBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiBhZ2VudHMgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwogICAgY2xhc3NEZWYgcmVzdWx0IGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKCiAgICBjbGFzcyBVIHVzZXI7CiAgICBjbGFzcyBPIG9yY2g7CiAgICBjbGFzcyBBLEIsQyxEIGFnZW50czsKICAgIGNsYXNzIFIsRiByZXN1bHQ7CmBgYAoKTXVsdGktYWdlbnQgYXJjaGl0ZWN0dXJlIGlzIHVzZWZ1bCB3aGVuOgoKLSBEb21haW5zIGFyZSBnZW51aW5lbHkgZGlmZmVyZW50Ci0gQWdlbnRzIHJlcXVpcmUgZGlmZmVyZW50IHRvb2xzCi0gU2VjdXJpdHkgYm91bmRhcmllcyBkaWZmZXIKLSBUYXNrcyBjYW4gcnVuIGluZGVwZW5kZW50bHkKLSBTcGVjaWFsaXphdGlvbiBpbXByb3ZlcyBxdWFsaXR5CgpCdXQgaXQgYWRkczoKCi0gTGF0ZW5jeQotIENvc3QKLSBDb29yZGluYXRpb24gY29tcGxleGl0eQotIEZhaWx1cmUgbW9kZXMKCk1pY3Jvc29mdCBleHBsaWNpdGx5IHJlY29tbWVuZHMgYWRkaW5nIG11bHRpLWFnZW50IGNvbXBsZXhpdHkgb25seSB3aGVuIGEgc2luZ2xlIGFnZW50IGNhbm5vdCByZWxpYWJseSBoYW5kbGUgdGhlIHByb2JsZW0uCgotLS0KCiMgMjQuIE11bHRpLUFnZW50IE9yY2hlc3RyYXRpb24gUGF0dGVybnMKClRoaXMgZGVzZXJ2ZXMgaXRzIG93biBhcmNoaXRlY3R1cmUgY2F0ZWdvcnkuCgojIyAyNC4xIFNlcXVlbnRpYWwKCmBgYG1lcm1haWQKZmxvd2NoYXJ0IExSCiAgICBJWyJJbnB1dCJdIC0tPiBBWyJBZ2VudCBBIl0gLS0+IEJbIkFnZW50IEIiXSAtLT4gQ1siQWdlbnQgQyJdIC0tPiBPWyJPdXRwdXQiXQoKICAgIGNsYXNzRGVmIGlvIGZpbGw6I0RCRUFGRSxzdHJva2U6IzI1NjNFQjsKICAgIGNsYXNzRGVmIGFnZW50IGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIG91dHB1dCBmaWxsOiNEQ0ZDRTcsc3Ryb2tlOiMxNkEzNEE7CgogICAgY2xhc3MgSSBpbzsKICAgIGNsYXNzIEEsQixDIGFnZW50OwogICAgY2xhc3MgTyBvdXRwdXQ7CmBgYAoKVXNlIHdoZW4gdGhlIHNlcXVlbmNlIGlzIGtub3duLgoKLS0tCgojIyAyNC4yIENvbmN1cnJlbnQKCmBgYG1lcm1haWQKZmxvd2NoYXJ0IFRECiAgICBJWyJJbnB1dCJdIC0tPiBBWyJBZ2VudCBBIl0KICAgIEkgLS0+IEJbIkFnZW50IEIiXQogICAgSSAtLT4gQ1siQWdlbnQgQyJdCgogICAgQSAtLT4gTVsiQWdncmVnYXRvciJdCiAgICBCIC0tPiBNCiAgICBDIC0tPiBNCgogICAgY2xhc3NEZWYgaW5wdXQgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgYWdlbnQgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgbWVyZ2UgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwoKICAgIGNsYXNzIEkgaW5wdXQ7CiAgICBjbGFzcyBBLEIsQyBhZ2VudDsKICAgIGNsYXNzIE0gbWVyZ2U7CmBgYAoKVXNlIGZvciBpbmRlcGVuZGVudCBhbmFseXNpcy4KCi0tLQoKIyMgMjQuMyBIYW5kb2ZmCgpgYGBtZXJtYWlkCmZsb3djaGFydCBMUgogICAgQVsiQWdlbnQgQSJdIC0tPnxIYW5kb2ZmfCBCWyJBZ2VudCBCIl0KICAgIEIgLS0+fEhhbmRvZmZ8IENbIkFnZW50IEMiXQoKICAgIGNsYXNzRGVmIGFnZW50IGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKCiAgICBjbGFzcyBBLEIsQyBhZ2VudDsKYGBgCgpUaGUgYWN0aXZlIGFnZW50IHRyYW5zZmVycyByZXNwb25zaWJpbGl0eS4KClVzZWZ1bCBmb3I6CgotIEVzY2FsYXRpb24KLSBTcGVjaWFsaXN0IHJvdXRpbmcKLSBDdXN0b21lciBzdXBwb3J0Ci0gRHluYW1pYyB3b3JrZmxvd3MKCi0tLQoKIyMgMjQuNCBHcm91cCBDaGF0CgpgYGBtZXJtYWlkCmZsb3djaGFydCBURAogICAgTVsiQ2hhdCBNYW5hZ2VyIl0KCiAgICBNIC0tPiBBWyJBZ2VudCBBIl0KICAgIE0gLS0+IEJbIkFnZW50IEIiXQogICAgTSAtLT4gQ1siQWdlbnQgQyJdCgogICAgQSA8LS0+IEIKICAgIEIgPC0tPiBDCiAgICBDIDwtLT4gQQoKICAgIGNsYXNzRGVmIG1hbmFnZXIgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgYWdlbnQgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwoKICAgIGNsYXNzIE0gbWFuYWdlcjsKICAgIGNsYXNzIEEsQixDIGFnZW50OwpgYGAKClVzZWZ1bCBmb3I6CgotIEJyYWluc3Rvcm1pbmcKLSBDb25zZW5zdXMKLSBDb2xsYWJvcmF0aXZlIGFuYWx5c2lzCi0gRGViYXRlCgotLS0KCiMjIDI0LjUgTWFnZW50aWMgLyBEeW5hbWljIE9yY2hlc3RyYXRpb24KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IFRECiAgICBHWyLwn46vIEdvYWwiXSAtLT4gTVsiRHluYW1pYyBNYW5hZ2VyIl0KCiAgICBNIC0tPiBQWyJUYXNrIFBsYW4iXQogICAgUCAtLT4gQVsiQWdlbnQgQSJdCiAgICBQIC0tPiBCWyJBZ2VudCBCIl0KICAgIFAgLS0+IENbIkFnZW50IEMiXQoKICAgIEEgLS0+IEZbIkZlZWRiYWNrIl0KICAgIEIgLS0+IEYKICAgIEMgLS0+IEYKCiAgICBGIC0tPiBNCiAgICBNIC0tPiBQCgogICAgY2xhc3NEZWYgZ29hbCBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiBtYW5hZ2VyIGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIHRhc2sgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgYWdlbnQgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwoKICAgIGNsYXNzIEcgZ29hbDsKICAgIGNsYXNzIE0gbWFuYWdlcjsKICAgIGNsYXNzIFAsRiB0YXNrOwogICAgY2xhc3MgQSxCLEMgYWdlbnQ7CmBgYAoKVGhlIG1hbmFnZXIgZHluYW1pY2FsbHkgY3JlYXRlcyBhbmQgYWRhcHRzIHRoZSB0YXNrIHBsYW4uCgpNaWNyb3NvZnQgY3VycmVudGx5IGRlc2NyaWJlcyBzZXF1ZW50aWFsLCBjb25jdXJyZW50LCBncm91cCBjaGF0LCBoYW5kb2ZmLCBhbmQgbWFnZW50aWMgYXMga2V5IG11bHRpLWFnZW50IG9yY2hlc3RyYXRpb24gcGF0dGVybnMuCgotLS0KCiMgMjUuIFBhdHRlcm4gIzIxIOKAlCBUb29sIENhbGxpbmcKClRvb2wgY2FsbGluZyBjb25uZWN0cyBBSSByZWFzb25pbmcgd2l0aCBkZXRlcm1pbmlzdGljIGNhcGFiaWxpdGllcy4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IExSCiAgICBBWyLwn6SWIEFJIEFnZW50Il0gLS0+IFRbIlRvb2wgSW50ZXJmYWNlIl0KCiAgICBUIC0tPiBBUElbIlJFU1QgQVBJIl0KICAgIFQgLS0+IERCWyJEYXRhYmFzZSJdCiAgICBUIC0tPiBLWyJLdWJlcm5ldGVzIl0KICAgIFQgLS0+IEdbIkdpdEh1YiJdCiAgICBUIC0tPiBTWyJTZWFyY2giXQoKICAgIEFQSSAtLT4gVAogICAgREIgLS0+IFQKICAgIEsgLS0+IFQKICAgIEcgLS0+IFQKICAgIFMgLS0+IFQKCiAgICBUIC0tPiBBCgogICAgY2xhc3NEZWYgYWdlbnQgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgaW50ZXJmYWNlIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIHRvb2wgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwoKICAgIGNsYXNzIEEgYWdlbnQ7CiAgICBjbGFzcyBUIGludGVyZmFjZTsKICAgIGNsYXNzIEFQSSxEQixLLEcsUyB0b29sOwpgYGAKClRoaXMgaXMgYW4gKiphcmNoaXRlY3R1cmUgcGF0dGVybioqLgoKLS0tCgojIDI2LiBNQ1Ag4oCUIEltcG9ydGFudCwgQnV0IE5vdCBhbiBBSSBBcmNoaXRlY3R1cmUgUGF0dGVybgoKVGhpcyBpcyB3aGVyZSBJIHdvdWxkIG1ha2UgYSBjbGVhciBkaXN0aW5jdGlvbiBpbiB0aGUgYmxvZy4KCioqTUNQIGlzIG5vdCBpdHNlbGYgYW4gQUkgYXJjaGl0ZWN0dXJlIHBhdHRlcm4uKioKCk1DUCDigJQgTW9kZWwgQ29udGV4dCBQcm90b2NvbCDigJQgaXMgYSAqKnByb3RvY29sL2ludGVncmF0aW9uIG1lY2hhbmlzbSoqIHRoYXQgc3RhbmRhcmRpemVzIGhvdyBBSSBhcHBsaWNhdGlvbnMgY2FuIGludGVyYWN0IHdpdGggdG9vbHMsIHJlc291cmNlcywgYW5kIG90aGVyIGNvbnRleHQuCgpBcmNoaXRlY3R1cmFsbHk6CgpgYGBtZXJtYWlkCmZsb3djaGFydCBMUgogICAgQVsi8J+kliBBSSBBcHBsaWNhdGlvbiAvIEFnZW50Il0gLS0+IE1bIk1DUCBDbGllbnQiXQoKICAgIE0gLS0+IFMxWyJNQ1AgU2VydmVyIl0KICAgIE0gLS0+IFMyWyJNQ1AgU2VydmVyIl0KICAgIE0gLS0+IFMzWyJNQ1AgU2VydmVyIl0KCiAgICBTMSAtLT4gVDFbIlRvb2xzIl0KICAgIFMyIC0tPiBUMlsiUmVzb3VyY2VzIl0KICAgIFMzIC0tPiBUM1siRW50ZXJwcmlzZSBBUElzIl0KCiAgICBjbGFzc0RlZiBhcHAgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgbWNwIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIHNlcnZlciBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiByZXNvdXJjZSBmaWxsOiNEQ0ZDRTcsc3Ryb2tlOiMxNkEzNEE7CgogICAgY2xhc3MgQSBhcHA7CiAgICBjbGFzcyBNIG1jcDsKICAgIGNsYXNzIFMxLFMyLFMzIHNlcnZlcjsKICAgIGNsYXNzIFQxLFQyLFQzIHJlc291cmNlOwpgYGAKClRoZXJlZm9yZToKCj4gKipUb29sLXVzZSBpcyBhbiBBSSBhcmNoaXRlY3R1cmUgcGF0dGVybi4gTUNQIGlzIG9uZSBwcm90b2NvbCB0aGF0IGNhbiBpbXBsZW1lbnQgdGhlIGludGVncmF0aW9uIGxheWVyIHVzZWQgYnkgdGhhdCBwYXR0ZXJuLioqCgpUaGlzIGRpc3RpbmN0aW9uIGlzIGltcG9ydGFudCBmb3IgYXJjaGl0ZWN0cy4KCkFXUyBsaWtld2lzZSBkZXNjcmliZXMgTUNQIGFzIGEgbWVjaGFuaXNtIGZvciBwcm92aWRpbmcgYWdlbnRzIGFjY2VzcyB0byBleHRlcm5hbCBjYXBhYmlsaXRpZXMsIGRhdGEsIGFuZCBBUElzLgoKT2ZmaWNpYWwgcmVmZXJlbmNlOgoKW01vZGVsIENvbnRleHQgUHJvdG9jb2xdKGh0dHBzOi8vbW9kZWxjb250ZXh0cHJvdG9jb2wuaW8vKQoKLS0tCgojIDI3LiBQYXR0ZXJuICMyMiDigJQgRXZlbnQtRHJpdmVuIEFJCgpBSSBkb2VzIG5vdCBhbHdheXMgbmVlZCB0byBzdGFydCB3aXRoIGEgdXNlciByZXF1ZXN0LgoKYGBgbWVybWFpZApmbG93Y2hhcnQgTFIKICAgIEVbIuKaoSBFdmVudCJdIC0tPiBCWyJFdmVudCBCdXMiXQoKICAgIEIgLS0+IEFbIkFJIFByb2Nlc3NvciJdCiAgICBCIC0tPiBXWyJXb3JrZmxvdyJdCiAgICBCIC0tPiBSWyJSdWxlcyJdCgogICAgQSAtLT4gT1siQWN0aW9uIl0KICAgIFcgLS0+IE8KICAgIFIgLS0+IE8KCiAgICBjbGFzc0RlZiBldmVudCBmaWxsOiNGRUYzQzcsc3Ryb2tlOiNEOTc3MDY7CiAgICBjbGFzc0RlZiBidXMgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgcHJvY2VzcyBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiBvdXRwdXQgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwoKICAgIGNsYXNzIEUgZXZlbnQ7CiAgICBjbGFzcyBCIGJ1czsKICAgIGNsYXNzIEEsVyxSIHByb2Nlc3M7CiAgICBjbGFzcyBPIG91dHB1dDsKYGBgCgpFeGFtcGxlczoKCi0gTmV3IGRvY3VtZW50IOKGkiBBSSBleHRyYWN0aW9uCi0gTmV3IEdpdEh1YiBQUiDihpIgQ29kZSByZXZpZXcKLSBOZXcgaW5jaWRlbnQg4oaSIFJvb3QtY2F1c2UgYW5hbHlzaXMKLSBOZXcgY3VzdG9tZXIg4oaSIENsYXNzaWZpY2F0aW9uCi0gTmV3IG1lc3NhZ2Ug4oaSIFN1bW1hcml6YXRpb24KCi0tLQoKIyAyOC4gUGF0dGVybiAjMjMg4oCUIEh1bWFuLWluLXRoZS1Mb29wCgpBSSBhdXRvbm9teSBzaG91bGQgY29ycmVzcG9uZCB0byBidXNpbmVzcyByaXNrLgoKYGBgbWVybWFpZApmbG93Y2hhcnQgVEQKICAgIEFbIkFJIERlY2lzaW9uIl0gLS0+IEN7IkNvbmZpZGVuY2UgLyBSaXNrIn0KCiAgICBDIC0tPnxMb3cgUmlza3wgWFsiQXV0b21hdGljIEFjdGlvbiJdCiAgICBDIC0tPnxIaWdoIFJpc2t8IEhbIvCfkaQgSHVtYW4gUmV2aWV3Il0KCiAgICBIIC0tPiBYCgogICAgY2xhc3NEZWYgYWkgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgZGVjaXNpb24gZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgYXV0byBmaWxsOiNEQ0ZDRTcsc3Ryb2tlOiMxNkEzNEE7CiAgICBjbGFzc0RlZiBodW1hbiBmaWxsOiNGQ0U3RjMsc3Ryb2tlOiNEQjI3Nzc7CgogICAgY2xhc3MgQSBhaTsKICAgIGNsYXNzIEMgZGVjaXNpb247CiAgICBjbGFzcyBYIGF1dG87CiAgICBjbGFzcyBIIGh1bWFuOwpgYGAKClVzZSBodW1hbiBhcHByb3ZhbCBmb3I6CgotIEZpbmFuY2lhbCBkZWNpc2lvbnMKLSBQcm9kdWN0aW9uIGNoYW5nZXMKLSBTZWN1cml0eSBhY3Rpb25zCi0gTGVnYWwgZGVjaXNpb25zCi0gQ29tcGxpYW5jZQotIEhpZ2gtaW1wYWN0IGN1c3RvbWVyIGFjdGlvbnMKCi0tLQoKIyAyOS4gUGF0dGVybiAjMjQg4oCUIEFJICsgVHJhZGl0aW9uYWwgU29mdHdhcmUKCk9uZSBvZiB0aGUgbW9zdCBpbXBvcnRhbnQgYXJjaGl0ZWN0dXJlIHBhdHRlcm5zIGlzIGtub3dpbmcgd2hlcmUgKipub3QqKiB0byB1c2UgQUkuCgpgYGBtZXJtYWlkCmZsb3djaGFydCBUQgogICAgQVsiQXBwbGljYXRpb24iXQoKICAgIEEgLS0+IEFJWyLwn6SWIEFJIl0KICAgIEEgLS0+IERbIuKame+4jyBEZXRlcm1pbmlzdGljIFNvZnR3YXJlIl0KICAgIEEgLS0+IFJbIvCfk5AgUnVsZXMgRW5naW5lIl0KCiAgICBBSSAtLT4gT1siQnVzaW5lc3MgT3V0Y29tZSJdCiAgICBEIC0tPiBPCiAgICBSIC0tPiBPCgogICAgY2xhc3NEZWYgYXBwIGZpbGw6I0RCRUFGRSxzdHJva2U6IzI1NjNFQjsKICAgIGNsYXNzRGVmIGFpIGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIGRldGVybWluaXN0aWMgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwogICAgY2xhc3NEZWYgcnVsZXMgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwoKICAgIGNsYXNzIEEgYXBwOwogICAgY2xhc3MgQUkgYWk7CiAgICBjbGFzcyBEIGRldGVybWluaXN0aWM7CiAgICBjbGFzcyBSIHJ1bGVzOwogICAgY2xhc3MgTyBhcHA7CmBgYAoKVXNlIHRyYWRpdGlvbmFsIHNvZnR3YXJlIGZvcjoKCi0gQXV0aGVudGljYXRpb24KLSBBdXRob3JpemF0aW9uCi0gRmluYW5jaWFsIGNhbGN1bGF0aW9ucwotIFRyYW5zYWN0aW9ucwotIERldGVybWluaXN0aWMgdmFsaWRhdGlvbgotIFNhZmV0eSBjb25zdHJhaW50cwotIEV4YWN0IGJ1c2luZXNzIHJ1bGVzCgpVc2UgQUkgZm9yOgoKLSBOYXR1cmFsLWxhbmd1YWdlIHVuZGVyc3RhbmRpbmcKLSBDbGFzc2lmaWNhdGlvbgotIFN1bW1hcml6YXRpb24KLSBSZWFzb25pbmcKLSBHZW5lcmF0aW9uCi0gQW1iaWd1b3VzIGlucHV0IGludGVycHJldGF0aW9uCgotLS0KCiMgMzAuIFBhdHRlcm4gIzI1IOKAlCBHdWFyZHJhaWxzCgpHdWFyZHJhaWxzIGNvbnN0cmFpbiBBSSBiZWhhdmlvci4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IExSCiAgICBJWyJJbnB1dCJdIC0tPiBHMVsiSW5wdXQgR3VhcmRyYWlsIl0KICAgIEcxIC0tPiBBWyJBSSAvIEFnZW50Il0KICAgIEEgLS0+IEcyWyJUb29sIEF1dGhvcml6YXRpb24iXQogICAgRzIgLS0+IEczWyJPdXRwdXQgR3VhcmRyYWlsIl0KICAgIEczIC0tPiBPWyJSZXNwb25zZSJdCgogICAgY2xhc3NEZWYgaW5wdXQgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgZ3VhcmQgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgYWkgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgb3V0cHV0IGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKCiAgICBjbGFzcyBJIGlucHV0OwogICAgY2xhc3MgRzEsRzIsRzMgZ3VhcmQ7CiAgICBjbGFzcyBBIGFpOwogICAgY2xhc3MgTyBvdXRwdXQ7CmBgYAoKR3VhcmRyYWlscyBjYW4gcHJvdGVjdCBhZ2FpbnN0OgoKLSBQcm9tcHQgaW5qZWN0aW9uCi0gRGF0YSBsZWFrYWdlCi0gVW5zYWZlIGFjdGlvbnMKLSBQb2xpY3kgdmlvbGF0aW9ucwotIFRvb2wgbWlzdXNlCi0gU2Vuc2l0aXZlIGluZm9ybWF0aW9uIGV4cG9zdXJlCgpHdWFyZHJhaWxzIGFyZSBhICoqY3Jvc3MtY3V0dGluZyBhcmNoaXRlY3R1cmUgY29uY2VybioqLCBub3QgbWVyZWx5IHByb21wdCBpbnN0cnVjdGlvbnMuCgotLS0KCiMgMzEuIFBhdHRlcm4gIzI2IOKAlCBBdXRob3JpemF0aW9uLUF3YXJlIFJBRwoKRW50ZXJwcmlzZSBSQUcgbXVzdCByZXNwZWN0IHBlcm1pc3Npb25zLgoKYGBgbWVybWFpZApmbG93Y2hhcnQgTFIKICAgIFVbIvCfkaQgVXNlciJdIC0tPiBJWyJJZGVudGl0eSJdCiAgICBJIC0tPiBBWyJBdXRob3JpemF0aW9uIl0KICAgIEEgLS0+IFJbIlJldHJpZXZlciJdCgogICAgUiAtLT4gRDFbIkFsbG93ZWQgRGF0YSJdCiAgICBSIC0uLT4gRDJbIlJlc3RyaWN0ZWQgRGF0YSJdCgogICAgRDEgLS0+IExbIkxMTSJdCiAgICBMIC0tPiBPWyJBbnN3ZXIiXQoKICAgIGNsYXNzRGVmIHVzZXIgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgc2VjdXJpdHkgZmlsbDojRkZFNEU2LHN0cm9rZTojRTExRDQ4OwogICAgY2xhc3NEZWYgcmV0cmlldmFsIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIGRhdGEgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwogICAgY2xhc3NEZWYgbW9kZWwgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwoKICAgIGNsYXNzIFUgdXNlcjsKICAgIGNsYXNzIEksQSBzZWN1cml0eTsKICAgIGNsYXNzIFIgcmV0cmlldmFsOwogICAgY2xhc3MgRDEgZGF0YTsKICAgIGNsYXNzIEQyIHNlY3VyaXR5OwogICAgY2xhc3MgTCBtb2RlbDsKICAgIGNsYXNzIE8gZGF0YTsKYGBgCgpUaGUga2V5IHByaW5jaXBsZToKCj4gKipSZXRyaWV2YWwgcGVybWlzc2lvbnMgbXVzdCBuZXZlciBiZSB3ZWFrZXIgdGhhbiB0aGUgdW5kZXJseWluZyBkYXRhIHBlcm1pc3Npb25zLioqCgotLS0KCiMgMzIuIFBhdHRlcm4gIzI3IOKAlCBDYWNoaW5nCgpBSSBzeXN0ZW1zIGNhbiBjYWNoZSBleHBlbnNpdmUgb3BlcmF0aW9ucy4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IExSCiAgICBRWyJSZXF1ZXN0Il0gLS0+IEN7IkNhY2hlIEhpdD8ifQoKICAgIEMgLS0+fFllc3wgUlsiQ2FjaGVkIFJlc3VsdCJdCiAgICBDIC0tPnxOb3wgTFsiTExNIC8gUmV0cmlldmFsIl0KCiAgICBMIC0tPiBTWyJTdG9yZSBDYWNoZSJdCiAgICBTIC0tPiBSCgogICAgY2xhc3NEZWYgcXVlcnkgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgY2FjaGUgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgbW9kZWwgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgcmVzdWx0IGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKCiAgICBjbGFzcyBRIHF1ZXJ5OwogICAgY2xhc3MgQyxTIGNhY2hlOwogICAgY2xhc3MgTCBtb2RlbDsKICAgIGNsYXNzIFIgcmVzdWx0OwpgYGAKClBvc3NpYmxlIGNhY2hlczoKCi0gRXhhY3QgcmVzcG9uc2UKLSBTZW1hbnRpYyByZXNwb25zZQotIFJldHJpZXZhbCByZXN1bHRzCi0gRW1iZWRkaW5ncwotIFRvb2wgcmVzdWx0cwoKLS0tCgojIDMzLiBQYXR0ZXJuICMyOCDigJQgUmV0cnkgYW5kIFJlY292ZXJ5CgpBSSBzeXN0ZW1zIGZhaWwuCgpUb29scyBmYWlsLgoKTW9kZWxzIHRpbWVvdXQuCgpBUElzIGJlY29tZSB1bmF2YWlsYWJsZS4KCkFyY2hpdGVjdHVyZSBzaG91bGQgZXhwZWN0IGZhaWx1cmUuCgpgYGBtZXJtYWlkCmZsb3djaGFydCBURAogICAgQVsiQUkgU3RlcCJdIC0tPiBDeyJTdWNjZXNzPyJ9CgogICAgQyAtLT58WWVzfCBPWyJDb250aW51ZSJdCiAgICBDIC0tPnxOb3wgUlsiUmV0cnkiXQoKICAgIFIgLS0+IEMKICAgIFIgLS0+IEZbIkZhbGxiYWNrIl0KICAgIEYgLS0+IEhbIkh1bWFuIC8gR3JhY2VmdWwgRGVncmFkYXRpb24iXQoKICAgIGNsYXNzRGVmIGFpIGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIGRlY2lzaW9uIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIHN1Y2Nlc3MgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwogICAgY2xhc3NEZWYgcmVjb3ZlcnkgZmlsbDojRkZFNEU2LHN0cm9rZTojRTExRDQ4OwoKICAgIGNsYXNzIEEgYWk7CiAgICBjbGFzcyBDIGRlY2lzaW9uOwogICAgY2xhc3MgTyBzdWNjZXNzOwogICAgY2xhc3MgUixGLEggcmVjb3Zlcnk7CmBgYAoKUHJvZHVjdGlvbiBBSSBuZWVkczoKCi0gVGltZW91dHMKLSBSZXRyeSBsaW1pdHMKLSBCYWNrb2ZmCi0gQ2lyY3VpdCBicmVha2VycwotIEZhbGxiYWNrIG1vZGVscwotIERlYWQtbGV0dGVyIGhhbmRsaW5nCi0gR3JhY2VmdWwgZGVncmFkYXRpb24KCi0tLQoKIyAzNC4gUGF0dGVybiAjMjkg4oCUIFN0YXRlZnVsIEFJIFdvcmtmbG93CgpMb25nLXJ1bm5pbmcgQUkgcHJvY2Vzc2VzIG5lZWQgcGVyc2lzdGVudCBzdGF0ZS4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IExSCiAgICBBWyJXb3JrZmxvdyJdIDwtLT4gU1siU3RhdGUgU3RvcmUiXQogICAgQSAtLT4gVDFbIlRhc2sgMSJdCiAgICBUMSAtLT4gVDJbIlRhc2sgMiJdCiAgICBUMiAtLT4gVDNbIlRhc2sgMyJdCgogICAgVDMgLS0+IENbIkNoZWNrcG9pbnQiXQoKICAgIEMgLS0+IFMKCiAgICBjbGFzc0RlZiB3b3JrZmxvdyBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiBzdGF0ZSBmaWxsOiNGRUYzQzcsc3Ryb2tlOiNEOTc3MDY7CiAgICBjbGFzc0RlZiB0YXNrIGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKCiAgICBjbGFzcyBBIHdvcmtmbG93OwogICAgY2xhc3MgUyxDIHN0YXRlOwogICAgY2xhc3MgVDEsVDIsVDMgdGFzazsKYGBgCgpVc2VmdWwgZm9yOgoKLSBMb25nLXJ1bm5pbmcgYWdlbnRzCi0gSHVtYW4gYXBwcm92YWwKLSBNdWx0aS1zdGVwIHdvcmtmbG93cwotIEludGVycnVwdGVkIGV4ZWN1dGlvbgotIER1cmFibGUgcHJvY2Vzc2VzCgotLS0KCiMgMzUuIFBhdHRlcm4gIzMwIOKAlCBFdmFsdWF0aW9uLURyaXZlbiBBSQoKQUkgYXJjaGl0ZWN0dXJlIG11c3QgaW5jbHVkZSBldmFsdWF0aW9uIGZyb20gdGhlIGJlZ2lubmluZy4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IFRCCiAgICBBWyJBSSBBcHBsaWNhdGlvbiJdIC0tPiBPWyJPdXRwdXRzIl0KICAgIE8gLS0+IEVbIkV2YWx1YXRpb24iXQoKICAgIEUgLS0+IFFbIlF1YWxpdHkiXQogICAgRSAtLT4gR1siR3JvdW5kZWRuZXNzIl0KICAgIEUgLS0+IFNbIlNhZmV0eSJdCiAgICBFIC0tPiBDWyJDb3N0Il0KICAgIEUgLS0+IExbIkxhdGVuY3kiXQoKICAgIFEgLS0+IElbIkltcHJvdmUiXQogICAgRyAtLT4gSQogICAgUyAtLT4gSQogICAgQyAtLT4gSQogICAgTCAtLT4gSQoKICAgIEkgLS0+IEEKCiAgICBjbGFzc0RlZiBhcHAgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgZXZhbCBmaWxsOiNGRUYzQzcsc3Ryb2tlOiNEOTc3MDY7CiAgICBjbGFzc0RlZiBtZXRyaWMgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgaW1wcm92ZSBmaWxsOiNEQ0ZDRTcsc3Ryb2tlOiMxNkEzNEE7CgogICAgY2xhc3MgQSBhcHA7CiAgICBjbGFzcyBPLEUgZXZhbDsKICAgIGNsYXNzIFEsRyxTLEMsTCBtZXRyaWM7CiAgICBjbGFzcyBJIGltcHJvdmU7CmBgYAoKRXZhbHVhdGUgZGlmZmVyZW50IGxheWVycyBzZXBhcmF0ZWx5LgoKIyMjIFJBRwoKLSBSZXRyaWV2YWwgcmVsZXZhbmNlCi0gUmVjYWxsCi0gUHJlY2lzaW9uCi0gR3JvdW5kZWRuZXNzCgojIyMgR2VuZXJhdGlvbgoKLSBBY2N1cmFjeQotIENvbXBsZXRlbmVzcwotIEZhaXRoZnVsbmVzcwotIFJlbGV2YW5jZQoKIyMjIEFnZW50cwoKLSBUb29sIHNlbGVjdGlvbgotIFRhc2sgY29tcGxldGlvbgotIE51bWJlciBvZiBzdGVwcwotIEZhaWx1cmUgcmF0ZQoKIyMjIFBsYXRmb3JtCgotIENvc3QKLSBMYXRlbmN5Ci0gQXZhaWxhYmlsaXR5Ci0gVGhyb3VnaHB1dAoKTWljcm9zb2Z0J3MgY3VycmVudCBSQUcgYXJjaGl0ZWN0dXJlIGd1aWRhbmNlIHRyZWF0cyBldmFsdWF0aW9uIGFzIGEgZmlyc3QtY2xhc3MgcGFydCBvZiBSQUcgZGVzaWduIHJhdGhlciB0aGFuIGFuIGFmdGVydGhvdWdodC4KCi0tLQoKIyAzNi4gUGF0dGVybiAjMzEg4oCUIEFJIE9ic2VydmFiaWxpdHkKCkFJIHJlcXVpcmVzIGRlZXBlciBvYnNlcnZhYmlsaXR5IHRoYW4gdHJhZGl0aW9uYWwgYXBwbGljYXRpb25zLgoKYGBgbWVybWFpZApmbG93Y2hhcnQgTFIKICAgIFVbIlVzZXIiXSAtLT4gQVsiQWdlbnQiXQoKICAgIEEgLS0+IFJbIlJBRyJdCiAgICBBIC0tPiBUWyJUb29scyJdCiAgICBBIC0tPiBNWyJNb2RlbCJdCgogICAgQSAtLT4gT1si8J+UrSBBSSBPYnNlcnZhYmlsaXR5Il0KCiAgICBSIC0tPiBPCiAgICBUIC0tPiBPCiAgICBNIC0tPiBPCgogICAgTyAtLT4gQ1siQ29zdCJdCiAgICBPIC0tPiBMWyJMYXRlbmN5Il0KICAgIE8gLS0+IFFbIlF1YWxpdHkiXQogICAgTyAtLT4gRVsiRXJyb3JzIl0KICAgIE8gLS0+IFhbIlRyYWNlcyJdCgogICAgY2xhc3NEZWYgYXBwIGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIGNvbXBvbmVudCBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiBvYnMgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYgbWV0cmljIGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKCiAgICBjbGFzcyBVLEEgYXBwOwogICAgY2xhc3MgUixULE0gY29tcG9uZW50OwogICAgY2xhc3MgTyBvYnM7CiAgICBjbGFzcyBDLEwsUSxFLFggbWV0cmljOwpgYGAKCllvdSBzaG91bGQgYmUgYWJsZSB0byB0cmFjZToKCioqVXNlciDihpIgUm91dGVyIOKGkiBBZ2VudCDihpIgUmV0cmlldmFsIOKGkiBUb29sIOKGkiBNb2RlbCDihpIgUmVzcG9uc2UqKgoKLS0tCgojIDM3LiBQYXR0ZXJuICMzMiDigJQgQUkgR2F0ZXdheQoKQXQgZW50ZXJwcmlzZSBzY2FsZSwgYXBwbGljYXRpb25zIHNob3VsZCBub3QgYWxsIGRpcmVjdGx5IGludGVncmF0ZSB3aXRoIGV2ZXJ5IG1vZGVsIHByb3ZpZGVyLgoKYGBgbWVybWFpZApmbG93Y2hhcnQgVEIKICAgIEFbIkFwcGxpY2F0aW9uIEEiXSAtLT4gR1si8J+boe+4jyBBSSBHYXRld2F5Il0KICAgIEJbIkFwcGxpY2F0aW9uIEIiXSAtLT4gRwogICAgQ1siQXBwbGljYXRpb24gQyJdIC0tPiBHCgogICAgRyAtLT4gT1siT3BlbkFJIl0KICAgIEcgLS0+IEdtWyJHZW1pbmkiXQogICAgRyAtLT4gU1siU0xNIl0KICAgIEcgLS0+IE9TU1siT3BlbiBTb3VyY2UiXQoKICAgIEcgLS0+IFBbIlBvbGljeSJdCiAgICBHIC0tPiBNWyJNb25pdG9yaW5nIl0KICAgIEcgLS0+IENzdFsiQ29zdCBDb250cm9sIl0KCiAgICBjbGFzc0RlZiBhcHBzIGZpbGw6I0RCRUFGRSxzdHJva2U6IzI1NjNFQjsKICAgIGNsYXNzRGVmIGdhdGV3YXkgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgbW9kZWxzIGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKICAgIGNsYXNzRGVmIGNvbnRyb2wgZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwoKICAgIGNsYXNzIEEsQixDIGFwcHM7CiAgICBjbGFzcyBHIGdhdGV3YXk7CiAgICBjbGFzcyBPLEdtLFMsT1NTIG1vZGVsczsKICAgIGNsYXNzIFAsTSxDc3QgY29udHJvbDsKYGBgCgpUaGUgZ2F0ZXdheSBjYW4gcHJvdmlkZToKCi0gTW9kZWwgYWJzdHJhY3Rpb24KLSBBdXRoZW50aWNhdGlvbgotIFJhdGUgbGltaXRpbmcKLSBSb3V0aW5nCi0gQ29zdCBtYW5hZ2VtZW50Ci0gTG9nZ2luZwotIFBvbGljeSBlbmZvcmNlbWVudAotIEZhaWxvdmVyCgotLS0KCiMgMzguIFBhdHRlcm4gIzMzIOKAlCBFdmVudC1Ecml2ZW4gTXVsdGktQWdlbnQgQXJjaGl0ZWN0dXJlCgpMYXJnZSBBSSBwbGF0Zm9ybXMgY2FuIGNvbWJpbmUgYWdlbnRzIGFuZCBhc3luY2hyb25vdXMgbWVzc2FnaW5nLgoKYGBgbWVybWFpZApmbG93Y2hhcnQgTFIKICAgIEVbIkV2ZW50Il0gLS0+IEJbIkV2ZW50IEJ1cyJdCgogICAgQiAtLT4gQVsiQWdlbnQgQSJdCiAgICBCIC0tPiBDWyJBZ2VudCBCIl0KICAgIEIgLS0+IERbIkFnZW50IEMiXQoKICAgIEEgLS0+IEIKICAgIEMgLS0+IEIKICAgIEQgLS0+IEIKCiAgICBCIC0tPiBPWyJPcmNoZXN0cmF0b3IiXQoKICAgIGNsYXNzRGVmIGV2ZW50IGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIGJ1cyBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiBhZ2VudCBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiBvcmNoIGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKCiAgICBjbGFzcyBFIGV2ZW50OwogICAgY2xhc3MgQiBidXM7CiAgICBjbGFzcyBBLEMsRCBhZ2VudDsKICAgIGNsYXNzIE8gb3JjaDsKYGBgCgpUaGlzIGNhbiBwcm92aWRlOgoKLSBMb29zZSBjb3VwbGluZwotIFNjYWxhYmlsaXR5Ci0gQXN5bmNocm9ub3VzIGV4ZWN1dGlvbgotIEluZGVwZW5kZW50IGFnZW50IGRlcGxveW1lbnQKLSBFdmVudCByZXBsYXkKCi0tLQoKIyAzOS4gUGF0dGVybiAjMzQg4oCUIFNpbXVsYXRpb24gLyBUZXN0LUJlZCBBZ2VudHMKCkFnZW50cyBjYW4gYmUgZXZhbHVhdGVkIGluc2lkZSBzaW11bGF0ZWQgZW52aXJvbm1lbnRzIGJlZm9yZSBwcm9kdWN0aW9uLgoKYGBgbWVybWFpZApmbG93Y2hhcnQgTFIKICAgIEFbIkFnZW50Il0gLS0+IEVbIlNpbXVsYXRpb24gRW52aXJvbm1lbnQiXQogICAgRSAtLT4gRlsiRmVlZGJhY2siXQogICAgRiAtLT4gQQoKICAgIEUgLS0+IE1bIk1ldHJpY3MiXQogICAgTSAtLT4gVlsiRXZhbHVhdGlvbiJdCgogICAgY2xhc3NEZWYgYWdlbnQgZmlsbDojRURFOUZFLHN0cm9rZTojN0MzQUVEOwogICAgY2xhc3NEZWYgZW52IGZpbGw6I0RCRUFGRSxzdHJva2U6IzI1NjNFQjsKICAgIGNsYXNzRGVmIGZlZWRiYWNrIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIGV2YWwgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwoKICAgIGNsYXNzIEEgYWdlbnQ7CiAgICBjbGFzcyBFIGVudjsKICAgIGNsYXNzIEYgZmVlZGJhY2s7CiAgICBjbGFzcyBNLFYgZXZhbDsKYGBgCgpVc2VmdWwgZm9yOgoKLSBBZ2VudCB0ZXN0aW5nCi0gU2FmZXR5IHRlc3RpbmcKLSBSZWdyZXNzaW9uIHRlc3RpbmcKLSBTY2VuYXJpbyBzaW11bGF0aW9uCi0gUGVyZm9ybWFuY2UgZXZhbHVhdGlvbgoKQVdTIGluY2x1ZGVzIHNpbXVsYXRpb24vdGVzdC1iZWQgYWdlbnRzIGFuZCBvYnNlcnZlci9tb25pdG9yaW5nIGFnZW50cyBhbW9uZyBpdHMgYWdlbnRpYyBhcmNoaXRlY3R1cmUgcGF0dGVybnMuCgotLS0KCiMgNDAuIFBhdHRlcm4gIzM1IOKAlCBPYnNlcnZlciAvIE1vbml0b3JpbmcgQWdlbnQKCkFuIGFnZW50IGNhbiBtb25pdG9yIGFub3RoZXIgQUkgc3lzdGVtLgoKYGBgbWVybWFpZApmbG93Y2hhcnQgTFIKICAgIEFbIlByb2R1Y3Rpb24gQWdlbnQiXSAtLT4gT1siT2JzZXJ2ZXIgQWdlbnQiXQoKICAgIE8gLS0+IFFbIlF1YWxpdHkiXQogICAgTyAtLT4gU1siU2FmZXR5Il0KICAgIE8gLS0+IFBbIlBlcmZvcm1hbmNlIl0KICAgIE8gLS0+IENbIkNvc3QiXQoKICAgIE8gLS0+fEFsZXJ0fCBIWyJIdW1hbiAvIE9wZXJhdG9yIl0KCiAgICBjbGFzc0RlZiBhZ2VudCBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiBvYnNlcnZlciBmaWxsOiNGRUYzQzcsc3Ryb2tlOiNEOTc3MDY7CiAgICBjbGFzc0RlZiBtZXRyaWMgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgaHVtYW4gZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwoKICAgIGNsYXNzIEEgYWdlbnQ7CiAgICBjbGFzcyBPIG9ic2VydmVyOwogICAgY2xhc3MgUSxTLFAsQyBtZXRyaWM7CiAgICBjbGFzcyBIIGh1bWFuOwpgYGAKClRoaXMgY2FuIGJlIHVzZWZ1bCBmb3IgY29tcGxleCBhdXRvbm9tb3VzIHN5c3RlbXMuCgotLS0KCiMgNDEuIFBhdHRlcm4gIzM2IOKAlCBNdWx0aW1vZGFsIEFJCgpBSSBhcmNoaXRlY3R1cmUgZG9lc24ndCBoYXZlIHRvIGJlIHRleHQtb25seS4KCmBgYG1lcm1haWQKZmxvd2NoYXJ0IExSCiAgICBUWyLwn5OdIFRleHQiXSAtLT4gTVsiTXVsdGltb2RhbCBNb2RlbCJdCiAgICBJWyLwn5a877iPIEltYWdlIl0gLS0+IE0KICAgIEFbIvCfjqcgQXVkaW8iXSAtLT4gTQogICAgVlsi8J+OpSBWaWRlbyJdIC0tPiBNCiAgICBEWyLwn5OKIERhdGEiXSAtLT4gTQoKICAgIE0gLS0+IE9bIk11bHRpbW9kYWwgT3V0cHV0Il0KCiAgICBjbGFzc0RlZiBpbnB1dCBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiBtb2RlbCBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiBvdXRwdXQgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwoKICAgIGNsYXNzIFQsSSxBLFYsRCBpbnB1dDsKICAgIGNsYXNzIE0gbW9kZWw7CiAgICBjbGFzcyBPIG91dHB1dDsKYGBgCgpVc2UgY2FzZXMgaW5jbHVkZToKCi0gRG9jdW1lbnQgdW5kZXJzdGFuZGluZwotIFZpc3VhbCBpbnNwZWN0aW9uCi0gVm9pY2UgYXNzaXN0YW50cwotIFZpZGVvIGFuYWx5c2lzCi0gTXVsdGltb2RhbCBzZWFyY2gKCi0tLQoKIyA0Mi4gUGF0dGVybiAjMzcg4oCUIEludGVsbGlnZW50IERvY3VtZW50IFByb2Nlc3NpbmcKCkEgY29tbW9uIGVudGVycHJpc2UgYXJjaGl0ZWN0dXJlIHBhdHRlcm4gY29tYmluZXM6CgpgYGB0ZXh0CkRvY3VtZW50CiDihpMKT0NSIC8gUGFyc2luZwog4oaTCkNsYXNzaWZpY2F0aW9uCiDihpMKRXh0cmFjdGlvbgog4oaTClZhbGlkYXRpb24KIOKGkwpIdW1hbiBSZXZpZXcKIOKGkwpCdXNpbmVzcyBTeXN0ZW0KYGBgCgpgYGBtZXJtYWlkCmZsb3djaGFydCBMUgogICAgRFsi8J+ThCBEb2N1bWVudCJdIC0tPiBQWyJQYXJzZSAvIE9DUiJdCiAgICBQIC0tPiBDWyJDbGFzc2lmeSJdCiAgICBDIC0tPiBYWyJFeHRyYWN0Il0KICAgIFggLS0+IFZbIlZhbGlkYXRlIl0KICAgIFYgLS0+IEh7Ikh1bWFuIFJldmlldz8ifQogICAgSCAtLT58WWVzfCBIUlsiSHVtYW4iXQogICAgSCAtLT58Tm98IEJbIkJ1c2luZXNzIFN5c3RlbSJdCiAgICBIUiAtLT4gQgoKICAgIGNsYXNzRGVmIGRvYyBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiBhaSBmaWxsOiNFREU5RkUsc3Ryb2tlOiM3QzNBRUQ7CiAgICBjbGFzc0RlZiB2YWxpZGF0ZSBmaWxsOiNGRUYzQzcsc3Ryb2tlOiNEOTc3MDY7CiAgICBjbGFzc0RlZiBodW1hbiBmaWxsOiNGQ0U3RjMsc3Ryb2tlOiNEQjI3Nzc7CiAgICBjbGFzc0RlZiBvdXRwdXQgZmlsbDojRENGQ0U3LHN0cm9rZTojMTZBMzRBOwoKICAgIGNsYXNzIEQgZG9jOwogICAgY2xhc3MgUCxDLFggYWk7CiAgICBjbGFzcyBWLEggdmFsaWRhdGU7CiAgICBjbGFzcyBIUiBodW1hbjsKICAgIGNsYXNzIEIgb3V0cHV0OwpgYGAKCkFXUyBpZGVudGlmaWVzIGludGVsbGlnZW50IGRvY3VtZW50IHByb2Nlc3NpbmcgYXMgYSByZXBlYXRhYmxlIGVudGVycHJpc2UgZ2VuZXJhdGl2ZS1BSSBhcHBsaWNhdGlvbiBwYXR0ZXJuLgoKLS0tCgojIDQzLiBIb3cgdGhlIFBhdHRlcm5zIEZpdCBUb2dldGhlcgoKVGhlIHJlYWwgYXJjaGl0ZWN0dXJlIHVzdWFsbHkgY29tYmluZXMgbXVsdGlwbGUgcGF0dGVybnMuCgpDb25zaWRlciBhbiBlbnRlcnByaXNlIEFJIGFzc2lzdGFudDoKCmBgYG1lcm1haWQKZmxvd2NoYXJ0IFRCCgogICAgVVsi8J+RpCBVc2VyIl0gLS0+IFVJWyJBcHBsaWNhdGlvbiAvIENoYXQiXQogICAgVUkgLS0+IEdbIkFJIEdhdGV3YXkiXQoKICAgIEcgLS0+IFJbIvCfmqYgUm91dGVyIl0KCiAgICBSIC0tPiBTWyJTaW1wbGUgTExNIl0KICAgIFIgLS0+IEFbIvCfpJYgQWdlbnQiXQoKICAgIEEgLS0+IENbIkNvbnRleHQgTGF5ZXIiXQoKICAgIEMgLS0+IE1FTVsiTWVtb3J5Il0KICAgIEMgLS0+IFJBR1siUkFHIl0KICAgIEMgLS0+IFBPTFsiUG9saWNpZXMiXQoKICAgIEEgLS0+IFRPT0xTWyJUb29sIExheWVyIl0KCiAgICBUT09MUyAtLT4gQVBJWyJBUElzIl0KICAgIFRPT0xTIC0tPiBEQlsiRGF0YWJhc2VzIl0KICAgIFRPT0xTIC0tPiBNQ1BbIk1DUCBTZXJ2ZXJzIl0KCiAgICBBIC0tPiBPWyJPcmNoZXN0cmF0aW9uIl0KCiAgICBPIC0tPiBTRVFbIlNlcXVlbnRpYWwiXQogICAgTyAtLT4gUEFSWyJQYXJhbGxlbCJdCiAgICBPIC0tPiBIQU5EWyJIYW5kb2ZmIl0KCiAgICBBIC0tPiBHMlsiR3VhcmRyYWlscyJdCgogICAgRzIgLS0+IEh7Ikh1bWFuIEFwcHJvdmFsPyJ9CiAgICBIIC0tPnxZZXN8IEhSWyJIdW1hbiJdCiAgICBIIC0tPnxOb3wgT1VUWyJSZXNwb25zZSJdCiAgICBIUiAtLT4gT1VUCgogICAgT1VUIC0tPiBFVlsiRXZhbHVhdGlvbiJdCiAgICBPVVQgLS0+IE9CU1siT2JzZXJ2YWJpbGl0eSJdCgogICAgY2xhc3NEZWYgdXNlciBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiBnYXRld2F5IGZpbGw6I0UwRTdGRixzdHJva2U6IzRGNDZFNTsKICAgIGNsYXNzRGVmIGFpIGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIGtub3dsZWRnZSBmaWxsOiNEQ0ZDRTcsc3Ryb2tlOiMxNkEzNEE7CiAgICBjbGFzc0RlZiB0b29scyBmaWxsOiNEQkVBRkUsc3Ryb2tlOiMyNTYzRUI7CiAgICBjbGFzc0RlZiBvcmNoZXN0cmF0aW9uIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIHNlY3VyaXR5IGZpbGw6I0ZGRTRFNixzdHJva2U6I0UxMUQ0ODsKICAgIGNsYXNzRGVmIG9wcyBmaWxsOiNFMEYyRkUsc3Ryb2tlOiMwMjg0Qzc7CgogICAgY2xhc3MgVSxVSSB1c2VyOwogICAgY2xhc3MgRyBnYXRld2F5OwogICAgY2xhc3MgUixTLEEsQyxPVVQgYWk7CiAgICBjbGFzcyBNRU0sUkFHLFBPTCBrbm93bGVkZ2U7CiAgICBjbGFzcyBUT09MUyxBUEksREIsTUNQIHRvb2xzOwogICAgY2xhc3MgTyxTRVEsUEFSLEhBTkQgb3JjaGVzdHJhdGlvbjsKICAgIGNsYXNzIEcyLEgsSFIgc2VjdXJpdHk7CiAgICBjbGFzcyBFVixPQlMgb3BzOwpgYGAKCk5vdGljZSB0aGUgZGlzdGluY3Rpb246CgojIyMgQXJjaGl0ZWN0dXJlIHBhdHRlcm5zCgotIFJBRwotIFJvdXRpbmcKLSBQcm9tcHQgY2hhaW5pbmcKLSBQYXJhbGxlbGl6YXRpb24KLSBBZ2VudHMKLSBNdWx0aS1hZ2VudCBvcmNoZXN0cmF0aW9uCi0gRXZhbHVhdG9yLW9wdGltaXplcgotIE1lbW9yeQotIEV2ZW50LWRyaXZlbiBwcm9jZXNzaW5nCgojIyMgSW50ZWdyYXRpb24gbWVjaGFuaXNtcwoKLSBBUElzCi0gVG9vbCBjYWxsaW5nCi0gTUNQCi0gRXZlbnQgYnVzZXMKLSBEYXRhYmFzZXMKCiMjIyBDcm9zcy1jdXR0aW5nIGNvbmNlcm5zCgotIFNlY3VyaXR5Ci0gR3VhcmRyYWlscwotIEdvdmVybmFuY2UKLSBFdmFsdWF0aW9uCi0gT2JzZXJ2YWJpbGl0eQotIENvc3QKLSBSZWxpYWJpbGl0eQoKIyMjIFRlY2hub2xvZ2llcwoKLSBPcGVuQUkKLSBHZW1pbmkKLSBDbGF1ZGUKLSBBenVyZQotIEFXUwotIEdvb2dsZSBDbG91ZAotIExhbmdHcmFwaAotIFNlbWFudGljIEtlcm5lbAotIEFnZW50IEZyYW1ld29yawotIEt1YmVybmV0ZXMKLSBWZWN0b3IgZGF0YWJhc2VzCgpUaGlzIHNlcGFyYXRpb24gaXMgKip2ZXJ5IGltcG9ydGFudCBmb3IgYW4gQUkgQXJjaGl0ZWN0KiouCgotLS0KCiMgNDQuIEFJIEFyY2hpdGVjdHVyZSBQYXR0ZXJuIFNlbGVjdGlvbiBNYXRyaXgKCnwgUHJvYmxlbSB8IFBhdHRlcm4gfCBDb21wbGV4aXR5IHwgTWFpbiBCZW5lZml0IHwKfC0tLXwtLS18LS0tOnwtLS18CnwgU2ltcGxlIGdlbmVyYXRpb24gfCBEaXJlY3QgTW9kZWwgQ2FsbCB8IPCfn6IgfCBTaW1wbGljaXR5IHwKfCBLbm93biB3b3JrZmxvdyB8IERldGVybWluaXN0aWMgV29ya2Zsb3cgfCDwn5+iIHwgUHJlZGljdGFiaWxpdHkgfAp8IE11bHRpLXN0ZXAgQUkgdGFzayB8IFByb21wdCBDaGFpbmluZyB8IPCfn6Lwn5+hIHwgU3RydWN0dXJlZCByZWFzb25pbmcgfAp8IERpZmZlcmVudCByZXF1ZXN0IHR5cGVzIHwgUm91dGluZyB8IPCfn6EgfCBTcGVjaWFsaXphdGlvbiB8CnwgRGlmZmVyZW50IG1vZGVsIGNhcGFiaWxpdGllcyB8IE1vZGVsIFJvdXRpbmcgfCDwn5+hIHwgQ29zdCAvIHF1YWxpdHkgfAp8IEluZGVwZW5kZW50IHRhc2tzIHwgUGFyYWxsZWxpemF0aW9uIHwg8J+foSB8IExvd2VyIGxhdGVuY3kgfAp8IENvbmRpdGlvbmFsIHByb2Nlc3MgfCBCcmFuY2hpbmcgfCDwn5+hIHwgRmxleGliaWxpdHkgfAp8IEltcHJvdmUgb3V0cHV0IHwgRXZhbHVhdG9yLU9wdGltaXplciB8IPCfn6EgfCBRdWFsaXR5IHwKfCBTZWxmLWNvcnJlY3Rpb24gfCBSZWZsZWN0aW9uIHwg8J+foSB8IEJldHRlciByZXN1bHRzIHwKfCBDb21wbGV4IHRhc2sgfCBQbGFubmluZyB8IPCfn6Hwn5+gIHwgRGVjb21wb3NpdGlvbiB8CnwgRXh0ZXJuYWwga25vd2xlZGdlIHwgUkFHIHwg8J+foSB8IEdyb3VuZGluZyB8CnwgQ29tcGxleCByZXRyaWV2YWwgfCBBZ2VudGljIFJBRyB8IPCfn6AgfCBEeW5hbWljIHJldHJpZXZhbCB8CnwgRHluYW1pYyB0b29sIHVzZSB8IFNpbmdsZSBBZ2VudCB8IPCfn6AgfCBBdXRvbm9teSB8CnwgU3BlY2lhbGl6ZWQgYWdlbnRzIHwgTXVsdGktQWdlbnQgfCDwn5S0IHwgU3BlY2lhbGl6YXRpb24gfAp8IE9wZW4tZW5kZWQgY29vcmRpbmF0aW9uIHwgTWFnZW50aWMgfCDwn5S0IHwgRHluYW1pYyBjb2xsYWJvcmF0aW9uIHwKfCBQZXJzaXN0ZW50IGNvbnRleHQgfCBNZW1vcnkgfCDwn5+hIHwgQ29udGludWl0eSB8CnwgRXh0ZXJuYWwgc3lzdGVtcyB8IFRvb2wgQ2FsbGluZyB8IPCfn6EgfCBBY3Rpb24gfAp8IFRvb2wgaW50ZXJvcGVyYWJpbGl0eSB8IE1DUCB8IPCfn6EgfCBTdGFuZGFyZGl6ZWQgaW50ZWdyYXRpb24gfAp8IEhpZ2gtcmlzayBkZWNpc2lvbnMgfCBIdW1hbi1pbi10aGUtbG9vcCB8IPCfn6EgfCBTYWZldHkgfAp8IExhcmdlIGVudGVycHJpc2UgcGxhdGZvcm0gfCBBSSBHYXRld2F5IHwg8J+foCB8IENlbnRyYWwgZ292ZXJuYW5jZSB8CnwgQXN5bmMgQUkgcHJvY2Vzc2luZyB8IEV2ZW50LWRyaXZlbiB8IPCfn6AgfCBTY2FsYWJpbGl0eSB8CnwgUHJvZHVjdGlvbiBxdWFsaXR5IHwgRXZhbHVhdGlvbiB8IPCfn6AgfCBSZWxpYWJpbGl0eSB8CnwgUHJvZHVjdGlvbiB2aXNpYmlsaXR5IHwgT2JzZXJ2YWJpbGl0eSB8IPCfn6AgfCBPcGVyYXRpb25zIHwKCi0tLQoKIyA0NS4gVGhlIEFJIEFyY2hpdGVjdCdzIENvbXBsZXhpdHkgTGFkZGVyCgpPbmUgb2YgdGhlIG1vc3QgdXNlZnVsIHByaW5jaXBsZXMgaXM6Cgo+ICoqVXNlIHRoZSBzaW1wbGVzdCBhcmNoaXRlY3R1cmUgdGhhdCByZWxpYWJseSBzb2x2ZXMgdGhlIHByb2JsZW0uKioKCmBgYG1lcm1haWQKZmxvd2NoYXJ0IFRECiAgICBBWyIx77iP4oOjIERpcmVjdCBNb2RlbCJdIC0tPiBCWyIy77iP4oOjIERldGVybWluaXN0aWMgV29ya2Zsb3ciXQogICAgQiAtLT4gQ1siM++4j+KDoyBSQUciXQogICAgQyAtLT4gRFsiNO+4j+KDoyBUb29sLVVzaW5nIEFnZW50Il0KICAgIEQgLS0+IEVbIjXvuI/ig6MgQWdlbnQgKyBNZW1vcnkiXQogICAgRSAtLT4gRlsiNu+4j+KDoyBNdWx0aS1BZ2VudCJdCiAgICBGIC0tPiBHWyI377iP4oOjIER5bmFtaWMgLyBNYWdlbnRpYyJdCiAgICBHIC0tPiBIWyI477iP4oOjIEVudGVycHJpc2UgQUkgUGxhdGZvcm0iXQoKICAgIGNsYXNzRGVmIGwxIGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKICAgIGNsYXNzRGVmIGwyIGZpbGw6I0RCRUFGRSxzdHJva2U6IzI1NjNFQjsKICAgIGNsYXNzRGVmIGwzIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIGw0IGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIGw1IGZpbGw6I0ZDRTdGMyxzdHJva2U6I0RCMjc3NzsKICAgIGNsYXNzRGVmIGw2IGZpbGw6I0ZGRTRFNixzdHJva2U6I0UxMUQ0ODsKICAgIGNsYXNzRGVmIGw3IGZpbGw6I0UwRTdGRixzdHJva2U6IzRGNDZFNTsKICAgIGNsYXNzRGVmIGw4IGZpbGw6IzdDM0FFRCxzdHJva2U6IzVCMjFCNixjb2xvcjojZmZmOwoKICAgIGNsYXNzIEEgbDE7CiAgICBjbGFzcyBCLEMgbDI7CiAgICBjbGFzcyBEIGwzOwogICAgY2xhc3MgRSBsNDsKICAgIGNsYXNzIEYgbDU7CiAgICBjbGFzcyBHIGw2OwogICAgY2xhc3MgSCBsODsKYGBgCgpEbyAqKm5vdCoqIGF1dG9tYXRpY2FsbHkgbW92ZSBmcm9tIGxlZnQgdG8gcmlnaHQuCgpGb3IgbWFueSBhcHBsaWNhdGlvbnMsIHN0b3BwaW5nIGF0IGxldmVsIDIgb3IgMyBpcyB0aGUgY29ycmVjdCBhcmNoaXRlY3R1cmUuCgotLS0KCiMgNDYuIEEgUHJhY3RpY2FsIERlY2lzaW9uIFRyZWUKCmBgYG1lcm1haWQKZmxvd2NoYXJ0IFRECiAgICBTWyLwn46vIFN0YXJ0IFdpdGggQnVzaW5lc3MgUHJvYmxlbSJdCgogICAgUyAtLT4gUTF7IlNpbmdsZSBtb2RlbCBjYWxsIGVub3VnaD8ifQoKICAgIFExIC0tPnxZZXN8IE1bIkRpcmVjdCBNb2RlbCJdCiAgICBRMSAtLT58Tm98IFEyeyJOZWVkIGV4dGVybmFsIGtub3dsZWRnZT8ifQoKICAgIFEyIC0tPnxZZXN8IFJbIlJBRyJdCiAgICBRMiAtLT58Tm98IFEzeyJJcyB3b3JrZmxvdyBkZXRlcm1pbmlzdGljPyJ9CgogICAgUTMgLS0+fFllc3wgV1siV29ya2Zsb3cgLyBQcm9tcHQgQ2hhaW4iXQogICAgUTMgLS0+fE5vfCBBWyJBZ2VudCJdCgogICAgUiAtLT4gUTR7IkR5bmFtaWMgcmV0cmlldmFsPyJ9CiAgICBRNCAtLT58Tm98IFNSWyJTdGFuZGFyZCBSQUciXQogICAgUTQgLS0+fFllc3wgQVJbIkFnZW50aWMgUkFHIl0KCiAgICBBIC0tPiBRNXsiTmVlZCBtdWx0aXBsZSBzcGVjaWFsaXN0cz8ifQogICAgUTUgLS0+fE5vfCBTQVsiU2luZ2xlIEFnZW50Il0KICAgIFE1IC0tPnxZZXN8IE1BWyJNdWx0aS1BZ2VudCJdCgogICAgTUEgLS0+IFE2eyJLbm93biBjb29yZGluYXRpb24/In0KICAgIFE2IC0tPnxZZXN8IFNFUVsiU2VxdWVudGlhbCAvIENvbmN1cnJlbnQgLyBIYW5kb2ZmIl0KICAgIFE2IC0tPnxOb3wgTUFHWyJEeW5hbWljIC8gTWFnZW50aWMiXQoKICAgIGNsYXNzRGVmIHN0YXJ0IGZpbGw6I0RCRUFGRSxzdHJva2U6IzI1NjNFQjsKICAgIGNsYXNzRGVmIGRlY2lzaW9uIGZpbGw6I0ZFRjNDNyxzdHJva2U6I0Q5NzcwNjsKICAgIGNsYXNzRGVmIHNpbXBsZSBmaWxsOiNEQ0ZDRTcsc3Ryb2tlOiMxNkEzNEE7CiAgICBjbGFzc0RlZiBjb21wbGV4IGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKCiAgICBjbGFzcyBTIHN0YXJ0OwogICAgY2xhc3MgUTEsUTIsUTMsUTQsUTUsUTYgZGVjaXNpb247CiAgICBjbGFzcyBNLFIsVyxTUixBUixTQSxNQSxTRVEsTUFHIHNpbXBsZTsKYGBgCgotLS0KCiMgNDcuIENvbW1vbiBBcmNoaXRlY3R1cmUgTWlzdGFrZXMKCiMjIOKdjCBNaXN0YWtlIDE6IEV2ZXJ5dGhpbmcgYmVjb21lcyBhbiBBZ2VudAoKQSBzaW1wbGUgd29ya2Zsb3cgZG9lcyBub3QgbmVlZCBhdXRvbm9tb3VzIHJlYXNvbmluZy4KCi0tLQoKIyMg4p2MIE1pc3Rha2UgMjogRXZlcnl0aGluZyBiZWNvbWVzIFJBRwoKSWYgdGhlIG1vZGVsIGFscmVhZHkga25vd3MgdGhlIHJlcXVpcmVkIGluZm9ybWF0aW9uLCByZXRyaWV2YWwgY2FuIGludHJvZHVjZSB1bm5lY2Vzc2FyeSBsYXRlbmN5IGFuZCBjb21wbGV4aXR5LgoKLS0tCgojIyDinYwgTWlzdGFrZSAzOiBNdWx0aS1BZ2VudCBiZWNhdXNlIGl0IHNvdW5kcyBhZHZhbmNlZAoKTW9yZSBhZ2VudHMgbWVhbjoKCi0gTW9yZSBjb21tdW5pY2F0aW9uCi0gTW9yZSB0b2tlbnMKLSBNb3JlIGxhdGVuY3kKLSBNb3JlIGZhaWx1cmUgbW9kZXMKLSBNb3JlIGRpZmZpY3VsdCBkZWJ1Z2dpbmcKCi0tLQoKIyMg4p2MIE1pc3Rha2UgNDogVHJlYXRpbmcgTUNQIGFzIHRoZSBhcmNoaXRlY3R1cmUKCk1DUCBpcyBhbiBpbnRlZ3JhdGlvbiBwcm90b2NvbC4KCkl0IGRvZXMgbm90IHJlcGxhY2U6CgotIEFnZW50IGFyY2hpdGVjdHVyZQotIFdvcmtmbG93IG9yY2hlc3RyYXRpb24KLSBTZWN1cml0eQotIFJBRwotIEdvdmVybmFuY2UKLSBFdmFsdWF0aW9uCgotLS0KCiMjIOKdjCBNaXN0YWtlIDU6IE5vIGRldGVybWluaXN0aWMgYm91bmRhcmllcwoKQ3JpdGljYWwgb3BlcmF0aW9ucyBzaG91bGQgbm90IHJlbHkgZW50aXJlbHkgb24gTExNIGp1ZGdtZW50LgoKVXNlIHRyYWRpdGlvbmFsIHNvZnR3YXJlIHdoZXJlIGV4YWN0IGJlaGF2aW9yIG1hdHRlcnMuCgotLS0KCiMjIOKdjCBNaXN0YWtlIDY6IE5vIGV2YWx1YXRpb24KCkEgc3VjY2Vzc2Z1bCBkZW1vIGlzIG5vdCBwcm9vZiBvZiBhIHByb2R1Y3Rpb24tcmVhZHkgQUkgc3lzdGVtLgoKLS0tCgojIyDinYwgTWlzdGFrZSA3OiBJZ25vcmluZyBhdXRob3JpemF0aW9uCgpFbnRlcnByaXNlIEFJIG11c3QgZW5mb3JjZSB0aGUgc2FtZSBkYXRhIHBlcm1pc3Npb25zIGFzIHRoZSB1bmRlcmx5aW5nIHN5c3RlbXMuCgotLS0KCiMgNDguIEFJIEFyY2hpdGVjdHVyZSBJcyBhIENvbWJpbmF0aW9uIG9mIFBhdHRlcm5zCgpUaGUgbW9zdCBpbXBvcnRhbnQgaWRlYSB0byByZW1lbWJlciBpcyB0aGlzOgoKYGBgdGV4dAogICAgICAgICAgICAgICAgICAgICBCVVNJTkVTUyBQUk9CTEVNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICDilIIKICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKWvAogICAgICAgICAgICAgICAgICAgICBQQVRURVJOIFNFTEVDVElPTgogICAgICAgICAgICAgICAgICAgICAgICAgICAg4pSCCiAgICAgICAgICDilIzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilLzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilJAKICAgICAgICAgIOKWvCAgICAgICAgICAgICAgICAg4pa8ICAgICAgICAgICAgICAgICDilrwKICAgICAgIEtub3dsZWRnZSAgICAgICAgICBSZWFzb25pbmcgICAgICAgIEFjdGlvbgogICAgICAgICAg4pSCICAgICAgICAgICAgICAgICDilIIgICAgICAgICAgICAgICAgIOKUggogICAgICAgICBSQUcgICAgICAgICAgICAgQWdlbnQgICAgICAgICAgICBUb29scwogICAgICAgICAg4pSCICAgICAgICAgICAgICAgICDilIIgICAgICAgICAgICAgICAgIOKUggogICAgICAgICAg4pSU4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pS84pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSYCiAgICAgICAgICAgICAgICAgICAgICAgICAgICDilrwKICAgICAgICAgICAgICAgICAgICAgICBPcmNoZXN0cmF0aW9uCiAgICAgICAgICAgICAgICAgICAgICAgICAgICDilIIKICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKWvAogICAgICAgICAgICAgICAgICAgICAgIEd1YXJkcmFpbHMKICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKUggogICAgICAgICAgICAgICAgICAgICAgICAgICAg4pa8CiAgICAgICAgICAgICAgICAgICAgSHVtYW4gT3ZlcnNpZ2h0CiAgICAgICAgICAgICAgICAgICAgICAgICAgICDilIIKICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKWvAogICAgICAgICAgICAgICAgICAgIEV2YWx1YXRpb24gKyBPcHMKYGBgCgpUaGUgYmVzdCBhcmNoaXRlY3R1cmUgaXMgcmFyZWx5IGEgc2luZ2xlIHBhdHRlcm4uCgpJdCBpcyB1c3VhbGx5IGEgKipjb21wb3NpdGlvbiBvZiBwYXR0ZXJucyoqLgoKLS0tCgojIDQ5LiBUaGUgTW9kZXJuIEFJIEFyY2hpdGVjdHVyZSBTdGFjawoKQSBtYXR1cmUgZW50ZXJwcmlzZSBBSSBwbGF0Zm9ybSBjYW4gdGhlcmVmb3JlIGxvb2sgbGlrZSB0aGlzOgoKYGBgbWVybWFpZApmbG93Y2hhcnQgVEIKCiAgICBVWFsi8J+Wpe+4jyBFWFBFUklFTkNFIl0KICAgIEFQUFsi8J+kliBBSSBBUFBMSUNBVElPTlMiXQogICAgT1JDSFsi8J+OryBPUkNIRVNUUkFUSU9OIl0KICAgIEFHRU5UWyLwn6egIEFHRU5UIC8gUkVBU09OSU5HIl0KICAgIEtOT1dbIvCfk5ogS05PV0xFREdFIC8gTUVNT1JZIl0KICAgIE1PREVMWyLimqEgTU9ERUwgTEFZRVIiXQogICAgVE9PTFsi8J+UjCBUT09MIC8gSU5URUdSQVRJT04iXQogICAgREFUQVsi8J+XhO+4jyBEQVRBIl0KICAgIFNFQ1si8J+UkCBTRUNVUklUWSAvIEdPVkVSTkFOQ0UiXQogICAgT1BTWyLwn5OKIEVWQUxVQVRJT04gLyBPQlNFUlZBQklMSVRZIl0KCiAgICBVWCAtLT4gQVBQCiAgICBBUFAgLS0+IE9SQ0gKICAgIE9SQ0ggLS0+IEFHRU5UCiAgICBBR0VOVCAtLT4gS05PVwogICAgQUdFTlQgLS0+IE1PREVMCiAgICBBR0VOVCAtLT4gVE9PTAogICAgS05PVyAtLT4gREFUQQogICAgVE9PTCAtLT4gREFUQQoKICAgIFNFQyAtLi0+IEFQUAogICAgU0VDIC0uLT4gQUdFTlQKICAgIFNFQyAtLi0+IEtOT1cKICAgIFNFQyAtLi0+IFRPT0wKCiAgICBPUFMgLS4tPiBBUFAKICAgIE9QUyAtLi0+IEFHRU5UCiAgICBPUFMgLS4tPiBNT0RFTAogICAgT1BTIC0uLT4gVE9PTAoKICAgIGNsYXNzRGVmIGV4cGVyaWVuY2UgZmlsbDojREJFQUZFLHN0cm9rZTojMjU2M0VCOwogICAgY2xhc3NEZWYgYXBwIGZpbGw6I0VERTlGRSxzdHJva2U6IzdDM0FFRDsKICAgIGNsYXNzRGVmIG9yY2ggZmlsbDojRkVGM0M3LHN0cm9rZTojRDk3NzA2OwogICAgY2xhc3NEZWYga25vd2xlZGdlIGZpbGw6I0RDRkNFNyxzdHJva2U6IzE2QTM0QTsKICAgIGNsYXNzRGVmIG1vZGVsIGZpbGw6I0UwRTdGRixzdHJva2U6IzRGNDZFNTsKICAgIGNsYXNzRGVmIHRvb2wgZmlsbDojRTBGMkZFLHN0cm9rZTojMDI4NEM3OwogICAgY2xhc3NEZWYgZGF0YSBmaWxsOiNGMEZERjQsc3Ryb2tlOiMxNkEzNEE7CiAgICBjbGFzc0RlZiBzZWN1cml0eSBmaWxsOiNGRkU0RTYsc3Ryb2tlOiNFMTFENDg7CiAgICBjbGFzc0RlZiBvcHMgZmlsbDojRkNFN0YzLHN0cm9rZTojREIyNzc3OwoKICAgIGNsYXNzIFVYIGV4cGVyaWVuY2U7CiAgICBjbGFzcyBBUFAgYXBwOwogICAgY2xhc3MgT1JDSCBvcmNoOwogICAgY2xhc3MgQUdFTlQsS05PVyBrbm93bGVkZ2U7CiAgICBjbGFzcyBNT0RFTCBtb2RlbDsKICAgIGNsYXNzIFRPT0wgdG9vbDsKICAgIGNsYXNzIERBVEEgZGF0YTsKICAgIGNsYXNzIFNFQyBzZWN1cml0eTsKICAgIGNsYXNzIE9QUyBvcHM7CmBgYAoKVGhpcyBpcyBub3QgYSBzaW5nbGUgcHJvZHVjdCBhcmNoaXRlY3R1cmUuCgpJdCBpcyBhICoqcmVmZXJlbmNlIG1lbnRhbCBtb2RlbCoqIGZvciBkZXNpZ25pbmcgQUkgc3lzdGVtcy4KCi0tLQoKIyA1MC4gRmluYWwgVGFrZWF3YXkgZm9yIEFJIEFyY2hpdGVjdHMKCkFJIEFyY2hpdGVjdHVyZSBpcyBtb3ZpbmcgZnJvbToKCioqTW9kZWwtY2VudHJpYyBhcmNoaXRlY3R1cmUqKgoKdG86CgoqKlN5c3RlbS1jZW50cmljIGFyY2hpdGVjdHVyZSoqCgpUaGUgbW9kZWwgaXMgYmVjb21pbmcgb25lIGNvbXBvbmVudCBvZiBhIG11Y2ggbGFyZ2VyIGludGVsbGlnZW50IHN5c3RlbS4KCkEgbW9kZXJuIEFJIEFyY2hpdGVjdCBuZWVkcyB0byB1bmRlcnN0YW5kOgoKIyMjIE1vZGVsIHBhdHRlcm5zCgotIERpcmVjdCBtb2RlbCBpbnZvY2F0aW9uCi0gTW9kZWwgcm91dGluZwotIE1vZGVsIGNhc2NhZGUKLSBNb2RlbCBmYWxsYmFjawoKIyMjIEtub3dsZWRnZSBwYXR0ZXJucwoKLSBSQUcKLSBIeWJyaWQgUkFHCi0gR3JhcGhSQUcKLSBBZ2VudGljIFJBRwotIFNlbGYtcmVmbGVjdGl2ZSBSQUcKLSBLbm93bGVkZ2Ugcm91dGluZwotIE1lbW9yeQotIENvbnRleHQgZW5naW5lZXJpbmcKCiMjIyBXb3JrZmxvdyBwYXR0ZXJucwoKLSBEZXRlcm1pbmlzdGljIHdvcmtmbG93cwotIFByb21wdCBjaGFpbmluZwotIFJvdXRpbmcKLSBCcmFuY2hpbmcKLSBQYXJhbGxlbGl6YXRpb24KLSBQbGFubmluZwotIEV2YWx1YXRvci1vcHRpbWl6ZXIKLSBSZWZsZWN0aW9uCgojIyMgQWdlbnQgcGF0dGVybnMKCi0gU2luZ2xlIGFnZW50Ci0gVG9vbC11c2luZyBhZ2VudAotIE9yY2hlc3RyYXRvci13b3JrZXJzCi0gTXVsdGktYWdlbnQKLSBTZXF1ZW50aWFsCi0gQ29uY3VycmVudAotIEhhbmRvZmYKLSBHcm91cCBjaGF0Ci0gRHluYW1pYyAvIE1hZ2VudGljCgojIyMgSW50ZWdyYXRpb24gcGF0dGVybnMKCi0gVG9vbCBjYWxsaW5nCi0gQVBJIGludGVncmF0aW9uCi0gRXZlbnQtZHJpdmVuIEFJCi0gSHVtYW4taW4tdGhlLWxvb3AKLSBUcmFkaXRpb25hbCBzb2Z0d2FyZSArIEFJCi0gTUNQIGFzIGFuIGludGVncmF0aW9uIHByb3RvY29sCgojIyMgRW50ZXJwcmlzZSBwYXR0ZXJucwoKLSBBSSBHYXRld2F5Ci0gQXV0aG9yaXphdGlvbi1hd2FyZSBSQUcKLSBHdWFyZHJhaWxzCi0gTW9kZWwgZmFsbGJhY2sKLSBTdGF0ZWZ1bCBleGVjdXRpb24KLSBDYWNoaW5nCi0gUmVsaWFiaWxpdHkgYW5kIHJlY292ZXJ5CgojIyMgT3BlcmF0aW9uYWwgcGF0dGVybnMKCi0gRXZhbHVhdGlvbgotIE9ic2VydmFiaWxpdHkKLSBDb3N0IG1hbmFnZW1lbnQKLSBTZWN1cml0eQotIEdvdmVybmFuY2UKLSBTaW11bGF0aW9uIGFuZCB0ZXN0aW5nCi0gQ29udGludW91cyBpbXByb3ZlbWVudAoKQW5kIHRoZSBtb3N0IGltcG9ydGFudCBhcmNoaXRlY3R1cmFsIHByaW5jaXBsZSByZW1haW5zOgoKPiAqKlN0YXJ0IHNpbXBsZS4gQWRkIGludGVsbGlnZW5jZSB3aGVyZSBpdCBjcmVhdGVzIHZhbHVlLiBBZGQgYXV0b25vbXkgd2hlcmUgaXQgaXMganVzdGlmaWVkLiBBZGQgY29tcGxleGl0eSBvbmx5IHdoZW4gdGhlIHByb2JsZW0gcmVxdWlyZXMgaXQuKioKClRoYXQgaXMgdGhlIGRpZmZlcmVuY2UgYmV0d2VlbiAqKmJ1aWxkaW5nIGFuIEFJIGRlbW8qKiBhbmQgKiphcmNoaXRlY3RpbmcgYSBwcm9kdWN0aW9uIEFJIHN5c3RlbSoqLgoKLS0tCgojIFJlZmVyZW5jZXMgJiBBcmNoaXRlY3R1cmUgUmVzb3VyY2VzCgojIyBNaWNyb3NvZnQgQXp1cmUgQXJjaGl0ZWN0dXJlIENlbnRlcgoKKipBSSBBcmNoaXRlY3R1cmUgT3ZlcnZpZXcqKiAgCltNaWNyb3NvZnQg4oCUIEFJIFRlY2hub2xvZ3kgT3ZlcnZpZXddKGh0dHBzOi8vbGVhcm4ubWljcm9zb2Z0LmNvbS9lbi11cy9henVyZS9hcmNoaXRlY3R1cmUvYWktbWwvYWktb3ZlcnZpZXc/dXRtX3NvdXJjZT1jaGF0Z3B0LmNvbSkKCkNvdmVycyBBSSB3b3JrbG9hZCBhcmNoaXRlY3R1cmUsIGRpcmVjdCBtb2RlbCBjYWxscywgYWdlbnQtYmFzZWQgYXJjaGl0ZWN0dXJlcyBhbmQgbXVsdGktYWdlbnQgc3lzdGVtcy4KCioqQUkgV29ya2xvYWQgQXJjaGl0ZWN0dXJlIFBhdHRlcm4qKiAgCltNaWNyb3NvZnQg4oCUIEFyY2hpdGVjdHVyZSBwYXR0ZXJuIGZvciBBSSB3b3JrbG9hZHNdKGh0dHBzOi8vbGVhcm4ubWljcm9zb2Z0LmNvbS9lbi11cy9henVyZS93ZWxsLWFyY2hpdGVjdGVkL2FpL2FyY2hpdGVjdHVyZS1wYXR0ZXJuP3V0bV9zb3VyY2U9Y2hhdGdwdC5jb20pCgpQcm92aWRlcyBiYXNlbGluZSBhcmNoaXRlY3R1cmUgZm9yIEFJIHdvcmtsb2FkcyBhbmQgZGlzY3Vzc2VzIHNlY3VyZSwgc2NhbGFibGUgYW5kIGdvdmVybmVkIEFJIHN5c3RlbXMuCgoqKkFJIEFnZW50IE9yY2hlc3RyYXRpb24gUGF0dGVybnMqKiAgCltNaWNyb3NvZnQg4oCUIEFJIEFnZW50IE9yY2hlc3RyYXRpb24gUGF0dGVybnNdKGh0dHBzOi8vbGVhcm4ubWljcm9zb2Z0LmNvbS9lbi11cy9henVyZS9hcmNoaXRlY3R1cmUvYWktbWwvZ3VpZGUvYWktYWdlbnQtZGVzaWduLXBhdHRlcm5zP3V0bV9zb3VyY2U9Y2hhdGdwdC5jb20pCgpDb3ZlcnM6CgotIFNlcXVlbnRpYWwKLSBDb25jdXJyZW50Ci0gR3JvdXAgQ2hhdAotIEhhbmRvZmYKLSBNYWdlbnRpYyBvcmNoZXN0cmF0aW9uCgoqKlJBRyBBcmNoaXRlY3R1cmUgR3VpZGUqKiAgCltNaWNyb3NvZnQg4oCUIERlc2lnbiBhbmQgRGV2ZWxvcCBhIFJBRyBTb2x1dGlvbl0oaHR0cHM6Ly9sZWFybi5taWNyb3NvZnQuY29tL2VuLXVzL2F6dXJlL2FyY2hpdGVjdHVyZS9haS1tbC9ndWlkZS9yYWcvcmFnLXNvbHV0aW9uLWRlc2lnbi1hbmQtZXZhbHVhdGlvbi1ndWlkZT91dG1fc291cmNlPWNoYXRncHQuY29tKQoKQ292ZXJzIFJBRyBhcmNoaXRlY3R1cmUsIGNodW5raW5nLCBlbnJpY2htZW50LCBlbWJlZGRpbmdzLCByZXRyaWV2YWwsIGV2YWx1YXRpb24gYW5kIGFnZW50aWMgUkFHLgoKKipBZ2VudGljIFJBRyoqICAKW01pY3Jvc29mdCDigJQgRGV2ZWxvcCBhbiBBZ2VudGljIFJBRyBTb2x1dGlvbl0oaHR0cHM6Ly9sZWFybi5taWNyb3NvZnQuY29tL2VuLXVzL2F6dXJlL2FyY2hpdGVjdHVyZS9haS1tbC9ndWlkZS9yYWcvcmFnLWFnZW50aWM/dXRtX3NvdXJjZT1jaGF0Z3B0LmNvbSkKCkNvdmVycyBkeW5hbWljIHJldHJpZXZhbCwgcmVhc29uaW5nIGxvb3BzIGFuZCB0b29sLWJhc2VkIHJldHJpZXZhbC4KCi0tLQoKIyBBV1MgQXJjaGl0ZWN0dXJlIFJlZmVyZW5jZXMKCioqQWdlbnRpYyBBSSBQYXR0ZXJucyBhbmQgV29ya2Zsb3dzKiogIApbQVdTIOKAlCBEZXNpZ25pbmcgYWdlbnRpYyB3b3JrZmxvd3NdKGh0dHBzOi8vZG9jcy5hd3MuYW1hem9uLmNvbS9wcmVzY3JpcHRpdmUtZ3VpZGFuY2UvbGF0ZXN0L2FnZW50aWMtYWktcGF0dGVybnMvZGVzaWduaW5nLWFnZW50aWMtd29ya2Zsb3dzLW9uLWF3cy5odG1sP3V0bV9zb3VyY2U9Y2hhdGdwdC5jb20pCgpUaGlzIGlzIG9uZSBvZiB0aGUgc3Ryb25nZXN0IGN1cnJlbnQgcmVmZXJlbmNlcyBmb3IgQUkvYWdlbnQgYXJjaGl0ZWN0dXJlIHBhdHRlcm5zLiBJdCBjb3ZlcnM6CgotIEJhc2ljIHJlYXNvbmluZyBhZ2VudHMKLSBUb29sLWJhc2VkIGFnZW50cwotIENvbXB1dGVyLXVzZSBhZ2VudHMKLSBDb2RpbmcgYWdlbnRzCi0gU3BlZWNoL3ZvaWNlIGFnZW50cwotIFdvcmtmbG93IG9yY2hlc3RyYXRpb24KLSBNZW1vcnktYXVnbWVudGVkIGFnZW50cwotIFNpbXVsYXRpb24gYWdlbnRzCi0gT2JzZXJ2ZXIgYWdlbnRzCi0gTXVsdGktYWdlbnQgY29sbGFib3JhdGlvbgotIFByb21wdCBjaGFpbmluZwotIFJvdXRpbmcKLSBQYXJhbGxlbGl6YXRpb24KLSBFdmFsdWF0b3IvcmVmbGVjdGlvbiBwYXR0ZXJucwoKKipBV1MgQWdlbnQgUGF0dGVybnMqKiAgCltBV1Mg4oCUIEFnZW50IFBhdHRlcm5zXShodHRwczovL2RvY3MuYXdzLmFtYXpvbi5jb20vcHJlc2NyaXB0aXZlLWd1aWRhbmNlL2xhdGVzdC9hZ2VudGljLWFpLXBhdHRlcm5zL2FnZW50LXBhdHRlcm5zLmh0bWw/dXRtX3NvdXJjZT1jaGF0Z3B0LmNvbSkKCkV4cGxhaW5zIHRoZSBjb25jZXB0dWFsIG1vZGVsIG9mIGFnZW50cyBhcm91bmQgcGVyY2VwdGlvbiwgcmVhc29uaW5nIGFuZCBhY3Rpb24uCgoqKlByb21wdCBDaGFpbmluZyoqICAKW0FXUyDigJQgV29ya2Zsb3cgZm9yIFByb21wdCBDaGFpbmluZ10oaHR0cHM6Ly9kb2NzLmF3cy5hbWF6b24uY29tL3ByZXNjcmlwdGl2ZS1ndWlkYW5jZS9sYXRlc3QvYWdlbnRpYy1haS1wYXR0ZXJucy93b3JrZmxvdy1mb3ItcHJvbXB0LWNoYWluaW5nLmh0bWw/dXRtX3NvdXJjZT1jaGF0Z3B0LmNvbSkKCioqUm91dGluZyoqICAKW0FXUyDigJQgV29ya2Zsb3cgZm9yIFJvdXRpbmddKGh0dHBzOi8vZG9jcy5hd3MuYW1hem9uLmNvbS9wcmVzY3JpcHRpdmUtZ3VpZGFuY2UvbGF0ZXN0L2FnZW50aWMtYWktcGF0dGVybnMvd29ya2Zsb3ctZm9yLXJvdXRpbmcuaHRtbD91dG1fc291cmNlPWNoYXRncHQuY29tKQoKKipNQ1AqKiAgCltBV1Mg4oCUIFdoYXQgaXMgTUNQP10oaHR0cHM6Ly9kb2NzLmF3cy5hbWF6b24uY29tL3ByZXNjcmlwdGl2ZS1ndWlkYW5jZS9sYXRlc3QvbWNwLXN0cmF0ZWdpZXMvd2hhdC1pcy1tY3AuaHRtbD91dG1fc291cmNlPWNoYXRncHQuY29tKQoKLS0tCgojIEdvb2dsZSBDbG91ZCBSZWZlcmVuY2VzCgoqKkFnZW50aWMgQUkgRGVzaWduIFBhdHRlcm5zKiogIApbR29vZ2xlIENsb3VkIOKAlCBDaG9vc2UgYSBkZXNpZ24gcGF0dGVybiBmb3IgeW91ciBhZ2VudGljIEFJIHN5c3RlbV0oaHR0cHM6Ly9jbG91ZC5nb29nbGUuY29tL2FyY2hpdGVjdHVyZS9jaG9vc2UtZGVzaWduLXBhdHRlcm4tYWdlbnRpYy1haS1zeXN0ZW0/dXRtX3NvdXJjZT1jaGF0Z3B0LmNvbSkKClByb3ZpZGVzIGFyY2hpdGVjdHVyZSBndWlkYW5jZSBmb3Igc2VxdWVudGlhbCBhbmQgb3RoZXIgbXVsdGktYWdlbnQgYXBwcm9hY2hlcy4KCi0tLQoKIyBBbnRocm9waWMgUmVmZXJlbmNlcwoKKipCdWlsZGluZyBFZmZlY3RpdmUgQUkgQWdlbnRzKiogIApbQW50aHJvcGljIOKAlCBCdWlsZGluZyBFZmZlY3RpdmUgQUkgQWdlbnRzXShodHRwczovL3Jlc291cmNlcy5hbnRocm9waWMuY29tL2J1aWxkaW5nLWVmZmVjdGl2ZS1haS1hZ2VudHM/dXRtX3NvdXJjZT1jaGF0Z3B0LmNvbSkKClVzZWZ1bCByZWZlcmVuY2UgZm9yIGRlY2lkaW5nIGJldHdlZW4gd29ya2Zsb3dzLCBzaW5nbGUtYWdlbnQgYW5kIG11bHRpLWFnZW50IGFyY2hpdGVjdHVyZXMgYW5kIGZvciB1bmRlcnN0YW5kaW5nIHdoZW4gY29tcGxleGl0eSBpcyBqdXN0aWZpZWQuCgotLS0KCiMgQ29tbXVuaXR5IFJlZmVyZW5jZQoKKipBd2Vzb21lIEFJIEFyY2hpdGVjdCDigJQgQUkgQXJjaGl0ZWN0dXJlIFBhdHRlcm5zKiogIApbQXdlc29tZSBBSSBBcmNoaXRlY3Qg4oCUIEFJIEFyY2hpdGVjdHVyZSBQYXR0ZXJuc10oaHR0cHM6Ly9naXRodWIuY29tL21heDQyMG1heC9hd2Vzb21lLWFpLWFyY2hpdGVjdC9ibG9iL21haW4vYWktYXJjaGl0ZWN0dXJlLXRvcGljcy9haS1hcmNoaXRlY3R1cmUtcGF0dGVybnMubWQ/dXRtX3NvdXJjZT1jaGF0Z3B0LmNvbSkKCkEgdXNlZnVsIGNvbW11bml0eS1vcmllbnRlZCByZWZlcmVuY2UgZm9yIGV4cGxvcmluZyBBSSBhcmNoaXRlY3R1cmUgdG9waWNzLgoKLS0tCgojIE9uZS1TZW50ZW5jZSBTdW1tYXJ5Cgo+ICoqQUkgQXJjaGl0ZWN0dXJlIGlzIG5vdCBhYm91dCBjaG9vc2luZyBhbiBMTE0gb3IgYW4gYWdlbnQgZnJhbWV3b3JrOyBpdCBpcyBhYm91dCBjb21wb3NpbmcgdGhlIHJpZ2h0IHBhdHRlcm5zIGZvciBrbm93bGVkZ2UsIHJlYXNvbmluZywgd29ya2Zsb3csIGF1dG9ub215LCBpbnRlZ3JhdGlvbiwgc2VjdXJpdHksIHJlbGlhYmlsaXR5LCBhbmQgb3BlcmF0aW9ucyB0byBzb2x2ZSBhIGJ1c2luZXNzIHByb2JsZW0uKio=';
-// ---------- Category taxonomy (mirrors the guide's own 7-layer model) ----------
-const CATEGORIES = [
-  { key: 'model',        label: 'Model & Inference',        line: '#2563EB', fill: '#DBEAFE',
-    kws: ['model routing', 'model cascade', 'model fallback', 'direct model call', 'model & inference', 'model layer'] },
-  { key: 'knowledge',    label: 'Knowledge & Grounding',    line: '#16A34A', fill: '#DCFCE7',
-    kws: ['graphrag', 'agentic rag', 'hybrid search', 'hybrid rag', ' rag', 'knowledge graph', 'memory', 'context engineering', 'grounding', 'knowledge & grounding', 'vector'] },
-  { key: 'workflow',     label: 'Workflow & Reasoning',     line: '#D97706', fill: '#FEF3C7',
-    kws: ['prompt chaining', 'routing', 'parallelization', 'branching', 'evaluator', 'reflection', 'planning', 'deterministic', 'workflow'] },
-  { key: 'agent',        label: 'Agent & Orchestration',    line: '#DB2777', fill: '#FCE7F3',
-    kws: ['agent', 'orchestrat', 'multi-agent', 'handoff', 'group chat', 'magentic', 'concurrent', 'sequential'] },
-  { key: 'integration',  label: 'Data & Integration',       line: '#0284C7', fill: '#E0F2FE',
-    kws: ['tool calling', 'tool-using', 'tool use', 'api', 'mcp', 'event-driven', 'human-in-the-loop', 'integration'] },
-  { key: 'reliability',  label: 'Reliability & Control',    line: '#E11D48', fill: '#FFE4E6',
-    kws: ['guardrail', 'authorization', 'caching', 'retry', 'recovery', 'stateful', 'reliability'] },
-  { key: 'operations',   label: 'Operations & Governance',  line: '#7C3AED', fill: '#EDE9FE',
-    kws: ['evaluation', 'observability', 'gateway', 'security', 'governance', 'cost management', 'operations', 'takeaway', 'final', 'reference', 'summary', 'complete guide', 'what is an ai architecture', 'landscape'] },
-];
+    P --> P1["Direct Model Call"]
+    P --> P2["Model Routing"]
+    P --> P3["Model Fallback"]
+    P --> P4["Model Cascade"]
 
-function detectCategory(text) {
-  const t = text.toLowerCase();
-  for (const cat of CATEGORIES) {
-    for (const kw of cat.kws) {
-      if (t.includes(kw)) return cat;
-    }
-  }
-  return null;
-}
+    K --> K1["RAG"]
+    K --> K2["Hybrid Search"]
+    K --> K3["GraphRAG"]
+    K --> K4["Agentic RAG"]
+    K --> K5["Memory"]
+    K --> K6["Context Engineering"]
 
-function slugify(text) {
-  return text.toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .slice(0, 64);
-}
+    W --> W1["Prompt Chaining"]
+    W --> W2["Routing"]
+    W --> W3["Parallelization"]
+    W --> W4["Conditional Branching"]
+    W --> W5["Evaluator-Optimizer"]
+    W --> W6["Reflection"]
+    W --> W7["Planning"]
 
-// ---------- Decode embedded markdown (base64 -> UTF-8) ----------
-function decodeMarkdown(b64) {
-  const binary = atob(b64);
-  const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-  return new TextDecoder('utf-8').decode(bytes);
-}
+    A --> A1["Single Agent"]
+    A --> A2["Tool-Using Agent"]
+    A --> A3["Orchestrator-Workers"]
+    A --> A4["Multi-Agent"]
+    A --> A5["Sequential"]
+    A --> A6["Concurrent"]
+    A --> A7["Handoff"]
+    A --> A8["Group Chat"]
+    A --> A9["Magentic"]
 
-// ---------- Mermaid setup ----------
-mermaid.initialize({
-  startOnLoad: false,
-  theme: 'base',
-  themeVariables: {
-    primaryColor: '#DBEAFE',
-    primaryBorderColor: '#2563EB',
-    primaryTextColor: '#101826',
-    lineColor: '#7C8BA6',
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '14px'
-  },
-  flowchart: { curve: 'basis', htmlLabels: true },
-  securityLevel: 'loose'
-});
+    I --> I1["API / Tool Calling"]
+    I --> I2["MCP Integration"]
+    I --> I3["Event-Driven AI"]
+    I --> I4["Human-in-the-Loop"]
+    I --> I5["Traditional Software + AI"]
 
-function decodeEntities(html) {
-  const ta = document.createElement('textarea');
-  ta.innerHTML = html;
-  return ta.value;
-}
+    R --> R1["Guardrails"]
+    R --> R2["Authorization-Aware RAG"]
+    R --> R3["Caching"]
+    R --> R4["Retry / Recovery"]
+    R --> R5["Stateful Execution"]
 
-// ---------- Render pipeline ----------
-async function renderGuide() {
-  const markdown = decodeMarkdown(window.__GUIDE_B64__);
+    O --> O1["Evaluation"]
+    O --> O2["Observability"]
+    O --> O3["AI Gateway"]
+    O --> O4["Security"]
+    O --> O5["Governance"]
+    O --> O6["Cost Management"]
 
-  const renderer = new marked.Renderer();
-  const originalCode = renderer.code.bind(renderer);
-  renderer.code = function (code, infostring) {
-    if ((infostring || '').trim() === 'mermaid') {
-      const id = 'mmd-' + Math.random().toString(36).slice(2, 10);
-      // stash raw code, render placeholder now, draw diagram after DOM insert
-      window.__MERMAID_QUEUE__.push({ id, code });
-      return `<div class="mermaid-wrap"><div class="mermaid" id="${id}"></div></div>`;
-    }
-    return originalCode(code, infostring);
-  };
+    classDef root fill:#7C3AED,color:#fff,stroke:#5B21B6;
+    classDef model fill:#DBEAFE,stroke:#2563EB,color:#111;
+    classDef knowledge fill:#DCFCE7,stroke:#16A34A,color:#111;
+    classDef workflow fill:#FEF3C7,stroke:#D97706,color:#111;
+    classDef agent fill:#FCE7F3,stroke:#DB2777,color:#111;
+    classDef integration fill:#E0F2FE,stroke:#0284C7,color:#111;
+    classDef reliability fill:#FFE4E6,stroke:#E11D48,color:#111;
+    classDef operations fill:#EDE9FE,stroke:#7C3AED,color:#111;
 
-  window.__MERMAID_QUEUE__ = [];
-  marked.setOptions({ renderer, gfm: true, breaks: false });
+    class AI root;
+    class P,P1,P2,P3,P4 model;
+    class K,K1,K2,K3,K4,K5,K6 knowledge;
+    class W,W1,W2,W3,W4,W5,W6,W7 workflow;
+    class A,A1,A2,A3,A4,A5,A6,A7,A8,A9 agent;
+    class I,I1,I2,I3,I4,I5 integration;
+    class R,R1,R2,R3,R4,R5 reliability;
+    class O,O1,O2,O3,O4,O5,O6 operations;
+```
 
-  const html = marked.parse(markdown);
-  const content = document.getElementById('content');
-  content.innerHTML = html;
+This is the mental model I recommend using as an AI Architect.
 
-  // Add anchors + colored chips to headings, build TOC data
-  const tocData = [];
-  content.querySelectorAll('h1, h2').forEach((h) => {
-    const text = h.textContent.trim();
-    const id = slugify(text) || 'section';
-    let uniqueId = id, n = 1;
-    while (document.getElementById(uniqueId)) { uniqueId = id + '-' + (++n); }
-    h.id = uniqueId;
+---
 
-    const cat = detectCategory(text);
-    if (h.tagName === 'H1' && cat) {
-      const chip = document.createElement('span');
-      chip.className = 'chip';
-      chip.textContent = cat.label;
-      chip.style.borderColor = cat.line;
-      chip.style.background = cat.fill;
-      chip.style.color = cat.line;
-      h.appendChild(chip);
-    }
+# 3. Pattern #1 — Direct Model Call
 
-    tocData.push({ id: uniqueId, text, level: h.tagName, cat });
-  });
+The simplest AI architecture is a direct call to a model.
 
-  buildTOC(tocData);
-  buildLegend();
+```mermaid
+flowchart LR
+    U["👤 User"] --> P["📝 Prompt"]
+    P --> M["🧠 LLM / SLM"]
+    M --> R["💬 Response"]
 
-  // Draw mermaid diagrams
-  for (const item of window.__MERMAID_QUEUE__) {
-    const el = document.getElementById(item.id);
-    if (!el) continue;
-    try {
-      const { svg } = await mermaid.render(item.id + '-svg', decodeEntities(item.code));
-      el.innerHTML = svg;
-    } catch (e) {
-      el.innerHTML = '<p style="color:#E11D48;font-size:13px;">Diagram could not be rendered.</p>';
-      console.error('Mermaid render error', e);
-    }
-  }
+    classDef user fill:#DBEAFE,stroke:#2563EB;
+    classDef prompt fill:#FEF3C7,stroke:#D97706;
+    classDef model fill:#EDE9FE,stroke:#7C3AED;
+    classDef result fill:#DCFCE7,stroke:#16A34A;
 
-  setupScrollSpy(tocData);
-}
+    class U user;
+    class P prompt;
+    class M model;
+    class R result;
+```
 
-function buildLegend() {
-  const legend = document.getElementById('legend');
-  legend.innerHTML = CATEGORIES.map(cat => `
-    <span class="legend-item">
-      <span class="legend-dot" style="background:${cat.fill};border-color:${cat.line}"></span>${cat.label}
-    </span>
-  `).join('');
-}
+Use this for:
 
-function buildTOC(tocData) {
-  const list = document.getElementById('toc-list');
-  list.innerHTML = tocData.map(item => {
-    const dotStyle = item.cat
-      ? `background:${item.cat.fill};border-color:${item.cat.line}`
-      : `background:#E2E8F5;border-color:#C7D3E8`;
-    const cls = item.level === 'H2' ? 'h2-item' : '';
-    return `<li class="${cls}"><a href="#${item.id}" data-id="${item.id}"><span class="toc-dot" style="${dotStyle}"></span>${item.text}</a></li>`;
-  }).join('');
-}
+- Summarization
+- Translation
+- Classification
+- Rewriting
+- Simple generation
+- Extraction
+- Basic Q&A
 
-function setupScrollSpy(tocData) {
-  const links = Array.from(document.querySelectorAll('.toc-list a'));
-  const headings = tocData.map(d => document.getElementById(d.id)).filter(Boolean);
+### Architectural principle
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const link = links.find(l => l.dataset.id === entry.target.id);
-      if (!link) return;
-      if (entry.isIntersecting) {
-        links.forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-10% 0px -75% 0px' });
+> **If a single model call solves the problem, don't build an agent.**
 
-  headings.forEach(h => observer.observe(h));
-}
+Current Microsoft guidance explicitly recommends starting with the least complex architecture: a direct model call when prompt engineering is sufficient.
 
-// ---------- Hero schematic: hub-and-spoke, evenly spaced by trigonometry ----------
-// Even angular spacing guarantees no two spokes ever overlap or read as "missing."
-function buildHeroSchematic() {
-  const wrap = document.getElementById('hero-schematic');
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('class', 'connector');
-  wrap.appendChild(svg);
+---
 
-  const root = document.createElement('div');
-  root.className = 'node root';
-  root.textContent = 'AI Architecture';
-  root.style.top = '50%';
-  root.style.left = '50%';
-  wrap.appendChild(root);
+# 4. Pattern #2 — Deterministic AI Workflow
 
-  const cx = 50, cy = 50;          // center, in %
-  const rx = 46, ry = 43;          // ellipse radii, in %
-  const count = CATEGORIES.length;
+Here the application controls the workflow.
 
-  CATEGORIES.forEach((cat, i) => {
-    const angle = (-90 + i * (360 / count)) * (Math.PI / 180);
-    const x = cx + rx * Math.cos(angle);
-    const y = cy + ry * Math.sin(angle);
+```mermaid
+flowchart LR
+    I["Input"] --> A["AI Step 1"]
+    A --> B["Business Logic"]
+    B --> C["AI Step 2"]
+    C --> D["Validation"]
+    D --> O["Output"]
 
-    const node = document.createElement('div');
-    node.className = 'node';
-    node.textContent = cat.label;
-    node.style.top = y + '%';
-    node.style.left = x + '%';
-    node.style.background = cat.fill;
-    node.style.borderColor = cat.line;
-    node.style.color = cat.line;
-    wrap.appendChild(node);
+    classDef io fill:#DBEAFE,stroke:#2563EB;
+    classDef ai fill:#EDE9FE,stroke:#7C3AED;
+    classDef logic fill:#FEF3C7,stroke:#D97706;
+    classDef validate fill:#DCFCE7,stroke:#16A34A;
 
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', cx + '%');
-    line.setAttribute('y1', cy + '%');
-    line.setAttribute('x2', x + '%');
-    line.setAttribute('y2', y + '%');
-    svg.appendChild(line);
-  });
-}
+    class I,O io;
+    class A,C ai;
+    class B logic;
+    class D validate;
+```
 
-// ---------- Back to top ----------
-function setupBackToTop() {
-  const btn = document.getElementById('back-to-top');
-  window.addEventListener('scroll', () => {
-    btn.classList.toggle('visible', window.scrollY > 600);
-  });
-  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-}
+The LLM does **not** decide the workflow.
 
-document.addEventListener('DOMContentLoaded', () => {
-  buildHeroSchematic();
-  setupBackToTop();
-  renderGuide();
-});
+The application does.
 
-</script>
-</body>
-</html>
+This is ideal for:
+
+- Compliance workflows
+- Document processing
+- Known business processes
+- Repeatable pipelines
+- Auditable systems
+
+Deterministic workflows provide predictability and are generally easier to test and audit than autonomous agent loops.
+
+---
+
+# 5. Pattern #3 — Prompt Chaining
+
+Prompt chaining decomposes a complex task into sequential AI steps.
+
+```mermaid
+flowchart LR
+    I["📥 Input"] --> A["🧠 Analyze"]
+    A --> B["📝 Generate"]
+    B --> C["🔍 Review"]
+    C --> D["✨ Improve"]
+    D --> O["📤 Output"]
+
+    classDef input fill:#DBEAFE,stroke:#2563EB;
+    classDef step fill:#EDE9FE,stroke:#7C3AED;
+    classDef review fill:#FEF3C7,stroke:#D97706;
+    classDef output fill:#DCFCE7,stroke:#16A34A;
+
+    class I input;
+    class A,B,D step;
+    class C review;
+    class O output;
+```
+
+Example:
+
+**Research → Extract → Analyze → Summarize**
+
+Prompt chaining is particularly useful when intermediate outputs become inputs to later stages. AWS describes this pattern as sequential decomposition of complex tasks into discrete LLM invocations.
+
+---
+
+# 6. Pattern #4 — Routing
+
+Routing determines which model, workflow, tool, or agent should process a request.
+
+```mermaid
+flowchart LR
+    U["👤 Request"] --> R["🚦 AI Router"]
+
+    R --> A["💻 Coding"]
+    R --> B["📚 Knowledge"]
+    R --> C["📊 Analytics"]
+    R --> D["🧾 Documents"]
+    R --> E["👨‍💼 Human"]
+
+    classDef input fill:#DBEAFE,stroke:#2563EB;
+    classDef router fill:#FEF3C7,stroke:#D97706;
+    classDef target fill:#DCFCE7,stroke:#16A34A;
+    classDef human fill:#FCE7F3,stroke:#DB2777;
+
+    class U input;
+    class R router;
+    class A,B,C,D target;
+    class E human;
+```
+
+Routing can be based on:
+
+- Intent
+- Complexity
+- User type
+- Domain
+- Data sensitivity
+- Model capability
+- Cost
+- Lat​ency
+
+AWS identifies routing as a core workflow pattern for dispatching requests to specialized agents, workflows, or tools.
+
+---
+
+# 7. Pattern #5 — Model Routing
+
+Routing can happen specifically between models.
+
+```mermaid
+flowchart LR
+    Q["Request"] --> R["Model Router"]
+
+    R --> S["⚡ Small Model"]
+    R --> L["🧠 Large Model"]
+    R --> C["💻 Coding Model"]
+    R --> V["👁️ Vision Model"]
+
+    classDef q fill:#DBEAFE,stroke:#2563EB;
+    classDef router fill:#FEF3C7,stroke:#D97706;
+    classDef model fill:#EDE9FE,stroke:#7C3AED;
+
+    class Q q;
+    class R router;
+    class S,L,C,V model;
+```
+
+The objective is:
+
+> **Use the cheapest and fastest model capable of solving the task.**
+
+This becomes increasingly important in enterprise AI platforms.
+
+---
+
+# 8. Pattern #6 — Model Cascade
+
+Model cascade is related to routing but uses progressive escalation.
+
+```mermaid
+flowchart TD
+    Q["Request"] --> S["⚡ Small Model"]
+    S -->|Confidence High| O["✅ Answer"]
+    S -->|Confidence Low| L["🧠 Large Model"]
+    L --> O
+
+    classDef q fill:#DBEAFE,stroke:#2563EB;
+    classDef small fill:#DCFCE7,stroke:#16A34A;
+    classDef large fill:#EDE9FE,stroke:#7C3AED;
+    classDef output fill:#FEF3C7,stroke:#D97706;
+
+    class Q q;
+    class S small;
+    class L large;
+    class O output;
+```
+
+This can reduce:
+
+- Cost
+- Latency
+- Large-model utilization
+
+---
+
+# 9. Pattern #7 — Parallelization
+
+Independent tasks can execute simultaneously.
+
+```mermaid
+flowchart LR
+    I["📥 Request"] --> A["Agent A"]
+    I --> B["Agent B"]
+    I --> C["Agent C"]
+
+    A --> M["🔀 Merge"]
+    B --> M
+    C --> M
+
+    M --> O["📤 Result"]
+
+    classDef input fill:#DBEAFE,stroke:#2563EB;
+    classDef agents fill:#EDE9FE,stroke:#7C3AED;
+    classDef merge fill:#FEF3C7,stroke:#D97706;
+    classDef output fill:#DCFCE7,stroke:#16A34A;
+
+    class I input;
+    class A,B,C agents;
+    class M merge;
+    class O output;
+```
+
+Also called:
+
+- Parallelization
+- Fan-out / fan-in
+- Scatter-gather
+- Map-reduce
+
+Use it when tasks are independent.
+
+Microsoft and AWS both document parallel/concurrent processing as a major AI workflow pattern.
+
+---
+
+# 10. Pattern #8 — Conditional Branching
+
+Not every request follows the same path.
+
+```mermaid
+flowchart TD
+    I["Request"] --> D{"Decision"}
+
+    D -->|Type A| A["Workflow A"]
+    D -->|Type B| B["Workflow B"]
+    D -->|Type C| C["Workflow C"]
+
+    A --> O["Output"]
+    B --> O
+    C --> O
+
+    classDef input fill:#DBEAFE,stroke:#2563EB;
+    classDef decision fill:#FEF3C7,stroke:#D97706;
+    classDef flow fill:#EDE9FE,stroke:#7C3AED;
+    classDef output fill:#DCFCE7,stroke:#16A34A;
+
+    class I input;
+    class D decision;
+    class A,B,C flow;
+    class O output;
+```
+
+This is useful for:
+
+- Risk classification
+- Support triage
+- Document classification
+- AI-assisted business workflows
+
+---
+
+# 11. Pattern #9 — Evaluator-Optimizer
+
+One model generates an answer.
+
+Another process evaluates it.
+
+```mermaid
+flowchart LR
+    G["🧠 Generator"] --> O["📄 Output"]
+    O --> E["🔍 Evaluator"]
+    E -->|Fail| G
+    E -->|Pass| F["✅ Final"]
+
+    classDef gen fill:#EDE9FE,stroke:#7C3AED;
+    classDef output fill:#DBEAFE,stroke:#2563EB;
+    classDef eval fill:#FEF3C7,stroke:#D97706;
+    classDef final fill:#DCFCE7,stroke:#16A34A;
+
+    class G gen;
+    class O output;
+    class E eval;
+    class F final;
+```
+
+Also known as:
+
+- Generator-verifier
+- Maker-checker
+- Critic loop
+- Reflect-refine
+- Evaluator-optimizer
+
+Microsoft explicitly identifies maker-checker loops as evaluator-optimizer / generator-verifier / reflection loops.
+
+---
+
+# 12. Pattern #10 — Reflection / Self-Correction
+
+The AI evaluates its own output and improves it.
+
+```mermaid
+flowchart LR
+    A["Generate"] --> B["Reflect"]
+    B --> C{"Good?"}
+    C -->|No| D["Improve"]
+    D --> A
+    C -->|Yes| E["Final"]
+
+    classDef gen fill:#EDE9FE,stroke:#7C3AED;
+    classDef reflect fill:#FEF3C7,stroke:#D97706;
+    classDef decision fill:#DBEAFE,stroke:#2563EB;
+    classDef final fill:#DCFCE7,stroke:#16A34A;
+
+    class A,D gen;
+    class B reflect;
+    class C decision;
+    class E final;
+```
+
+Useful for:
+
+- Code review
+- Architecture review
+- Research
+- Content generation
+- RAG quality improvement
+
+Always impose an iteration limit.
+
+---
+
+# 13. Pattern #11 — Planning
+
+Complex tasks can be decomposed into a plan before execution.
+
+```mermaid
+flowchart TD
+    G["🎯 Goal"] --> P["🧠 Planner"]
+    P --> T1["Task 1"]
+    P --> T2["Task 2"]
+    P --> T3["Task 3"]
+
+    T1 --> E["Execution"]
+    T2 --> E
+    T3 --> E
+
+    E --> V["Validation"]
+    V --> O["Outcome"]
+
+    classDef goal fill:#DBEAFE,stroke:#2563EB;
+    classDef planner fill:#EDE9FE,stroke:#7C3AED;
+    classDef tasks fill:#FEF3C7,stroke:#D97706;
+    classDef exec fill:#E0F2FE,stroke:#0284C7;
+    classDef result fill:#DCFCE7,stroke:#16A34A;
+
+    class G goal;
+    class P planner;
+    class T1,T2,T3 tasks;
+    class E exec;
+    class V,O result;
+```
+
+Planning is useful when the task is open-ended or has multiple dependencies.
+
+---
+
+# 14. Pattern #12 — Orchestrator-Workers
+
+A manager creates tasks dynamically and delegates them to specialized workers.
+
+```mermaid
+flowchart TD
+    G["🎯 Goal"] --> M["🧠 Orchestrator"]
+
+    M --> A["Worker A"]
+    M --> B["Worker B"]
+    M --> C["Worker C"]
+
+    A --> R["Results"]
+    B --> R
+    C --> R
+
+    R --> M
+    M --> F["✅ Final"]
+
+    classDef goal fill:#DBEAFE,stroke:#2563EB;
+    classDef manager fill:#EDE9FE,stroke:#7C3AED;
+    classDef worker fill:#DCFCE7,stroke:#16A34A;
+    classDef result fill:#FEF3C7,stroke:#D97706;
+
+    class G goal;
+    class M manager;
+    class A,B,C worker;
+    class R,F result;
+```
+
+Unlike a fixed pipeline, the orchestrator dynamically decides:
+
+- Which tasks are needed
+- Which worker performs them
+- What order they execute
+- Whether additional work is necessary
+
+---
+
+# 15. Pattern #13 — Single Agent
+
+An agent can reason, select tools, and execute multiple steps.
+
+```mermaid
+flowchart LR
+    U["👤 User"] --> A["🤖 Agent"]
+
+    A --> T1["🔎 Search"]
+    A --> T2["🗄️ Database"]
+    A --> T3["⚙️ API"]
+    A --> T4["📚 Knowledge"]
+
+    T1 --> A
+    T2 --> A
+    T3 --> A
+    T4 --> A
+
+    A --> O["📤 Result"]
+
+    classDef user fill:#DBEAFE,stroke:#2563EB;
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+    classDef tool fill:#DCFCE7,stroke:#16A34A;
+    classDef output fill:#FEF3C7,stroke:#D97706;
+
+    class U user;
+    class A agent;
+    class T1,T2,T3,T4 tool;
+    class O output;
+```
+
+A single agent is often the best starting point for agentic applications.
+
+Microsoft's current guidance explicitly notes that a single agent with multiple tools is often preferable to immediately introducing multi-agent complexity.
+
+---
+
+# 16. Pattern #14 — Tool-Using Agent
+
+The agent dynamically selects tools.
+
+```mermaid
+flowchart TD
+    U["User"] --> A["Agent"]
+    A --> D{"Which Tool?"}
+
+    D --> S["Search"]
+    D --> DB["Database"]
+    D --> API["API"]
+    D --> C["Calculator"]
+
+    S --> A
+    DB --> A
+    API --> A
+    C --> A
+
+    A --> O["Answer / Action"]
+
+    classDef user fill:#DBEAFE,stroke:#2563EB;
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+    classDef decision fill:#FEF3C7,stroke:#D97706;
+    classDef tools fill:#DCFCE7,stroke:#16A34A;
+    classDef output fill:#E0F2FE,stroke:#0284C7;
+
+    class U user;
+    class A agent;
+    class D decision;
+    class S,DB,API,C tools;
+    class O output;
+```
+
+This is one of the fundamental building blocks of modern agents.
+
+---
+
+# 17. Pattern #15 — RAG
+
+RAG separates model intelligence from enterprise knowledge.
+
+```mermaid
+flowchart LR
+    D["📄 Documents"] --> I["Ingestion"]
+    I --> C["Chunking"]
+    C --> E["Embeddings"]
+    E --> V["🔎 Search Index"]
+
+    U["👤 Query"] --> S["Retriever"]
+    V --> S
+    S --> X["Relevant Context"]
+    X --> L["🧠 LLM"]
+    U --> L
+    L --> O["Grounded Answer"]
+
+    classDef data fill:#DBEAFE,stroke:#2563EB;
+    classDef process fill:#FEF3C7,stroke:#D97706;
+    classDef index fill:#DCFCE7,stroke:#16A34A;
+    classDef model fill:#EDE9FE,stroke:#7C3AED;
+    classDef output fill:#E0F2FE,stroke:#0284C7;
+
+    class D,U data;
+    class I,C,S,X process;
+    class E,V index;
+    class L model;
+    class O output;
+```
+
+RAG is an architecture pattern for grounding model responses in external or proprietary information. Microsoft describes it as an industry-standard pattern for applications that need specific or proprietary data.
+
+---
+
+# 18. RAG Is Not One Pattern
+
+RAG itself has evolved into several architecture patterns.
+
+## Naive / Standard RAG
+
+```text
+Query → Retrieve → Context → LLM → Answer
+```
+
+## Hybrid RAG
+
+```text
+Query
+ ├── Keyword Search
+ └── Vector Search
+          ↓
+       Reranker
+          ↓
+         LLM
+```
+
+## GraphRAG
+
+```text
+Query
+  ↓
+Entity / Relationship Retrieval
+  ↓
+Knowledge Graph
+  ↓
+LLM
+```
+
+## Agentic RAG
+
+```text
+Query
+  ↓
+Agent
+  ├── Search
+  ├── Re-search
+  ├── Database
+  ├── API
+  └── Knowledge Graph
+          ↓
+        LLM
+```
+
+## Self-Reflective RAG
+
+```text
+Retrieve
+   ↓
+Generate
+   ↓
+Evaluate
+   ↓
+Enough?
+ ┌─┴─┐
+No  Yes
+│    │
+└─►Retrieve
+     again
+```
+
+Microsoft's current RAG guidance explicitly discusses standard RAG, agentic RAG, GraphRAG-style retrieval, and self-reflective approaches.
+
+---
+
+# 19. Pattern #16 — Agentic RAG
+
+Agentic RAG combines retrieval with agent reasoning.
+
+```mermaid
+flowchart TD
+    Q["👤 Query"] --> A["🤖 Agent"]
+    A --> S["🔎 Search"]
+    S --> R["Retrieved Data"]
+    R --> A
+
+    A --> D["🗄️ Database"]
+    D --> A
+
+    A --> API["🌐 API"]
+    API --> A
+
+    A --> C{"Enough Context?"}
+
+    C -->|No| A
+    C -->|Yes| L["🧠 LLM"]
+    L --> O["Answer"]
+
+    classDef query fill:#DBEAFE,stroke:#2563EB;
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+    classDef tool fill:#DCFCE7,stroke:#16A34A;
+    classDef decision fill:#FEF3C7,stroke:#D97706;
+    classDef output fill:#E0F2FE,stroke:#0284C7;
+
+    class Q query;
+    class A,L agent;
+    class S,R,D,API tool;
+    class C decision;
+    class O output;
+```
+
+Agentic RAG is appropriate when retrieval itself requires dynamic reasoning, multiple searches, query decomposition, or combining retrieval with actions.
+
+---
+
+# 20. Pattern #17 — Memory
+
+Memory allows AI applications to maintain state beyond a single model call.
+
+```mermaid
+flowchart LR
+    U["User"] --> A["Agent"]
+
+    A <--> S["Short-Term Memory"]
+    A <--> L["Long-Term Memory"]
+    A <--> E["Episodic Memory"]
+    A <--> K["Semantic Memory"]
+
+    A --> O["Response"]
+
+    classDef user fill:#DBEAFE,stroke:#2563EB;
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+    classDef memory fill:#DCFCE7,stroke:#16A34A;
+    classDef output fill:#FEF3C7,stroke:#D97706;
+
+    class U user;
+    class A agent;
+    class S,L,E,K memory;
+    class O output;
+```
+
+Memory can include:
+
+- Conversation state
+- User preferences
+- Previous tasks
+- Facts
+- Decisions
+- Long-term knowledge
+- Agent state
+
+AWS describes agent memory using external stores, RAG, in-context information, and persistent agent state.
+
+---
+
+# 21. Pattern #18 — Context Engineering
+
+Context engineering determines **what information reaches the model**.
+
+```mermaid
+flowchart TB
+    U["User Request"] --> C["🧩 Context Builder"]
+
+    H["Conversation History"] --> C
+    R["Retrieved Knowledge"] --> C
+    M["Memory"] --> C
+    T["Tool Results"] --> C
+    P["Policies"] --> C
+    B["Business Rules"] --> C
+
+    C --> L["🧠 LLM"]
+    L --> O["Output"]
+
+    classDef source fill:#DBEAFE,stroke:#2563EB;
+    classDef context fill:#FEF3C7,stroke:#D97706;
+    classDef model fill:#EDE9FE,stroke:#7C3AED;
+    classDef output fill:#DCFCE7,stroke:#16A34A;
+
+    class U,H,R,M,T,P,B source;
+    class C context;
+    class L model;
+    class O output;
+```
+
+This is broader than prompt engineering.
+
+The architect controls:
+
+- What context is retrieved
+- How much context is included
+- Which sources are trusted
+- How context is prioritized
+- What gets removed
+- What gets summarized
+
+---
+
+# 22. Pattern #19 — Knowledge Routing
+
+Enterprise knowledge is often distributed.
+
+```mermaid
+flowchart LR
+    Q["Query"] --> R["Knowledge Router"]
+
+    R --> C["Confluence"]
+    R --> G["Git"]
+    R --> S["SharePoint"]
+    R --> DB["Databases"]
+    R --> W["Web"]
+
+    C --> M["Merge"]
+    G --> M
+    S --> M
+    DB --> M
+    W --> M
+
+    M --> L["LLM"]
+
+    classDef q fill:#DBEAFE,stroke:#2563EB;
+    classDef router fill:#FEF3C7,stroke:#D97706;
+    classDef source fill:#DCFCE7,stroke:#16A34A;
+    classDef model fill:#EDE9FE,stroke:#7C3AED;
+
+    class Q q;
+    class R router;
+    class C,G,S,DB,W source;
+    class M,L model;
+```
+
+This pattern is valuable in enterprise environments where information is fragmented across many systems.
+
+---
+
+# 23. Pattern #20 — Multi-Agent Architecture
+
+Multiple specialized agents collaborate.
+
+```mermaid
+flowchart TD
+    U["👤 User"] --> O["🎯 Orchestrator"]
+
+    O --> A["🔐 Security Agent"]
+    O --> B["☁️ Cloud Agent"]
+    O --> C["💰 Cost Agent"]
+    O --> D["⚙️ DevOps Agent"]
+
+    A --> R["Aggregation"]
+    B --> R
+    C --> R
+    D --> R
+
+    R --> F["Final Recommendation"]
+
+    classDef user fill:#DBEAFE,stroke:#2563EB;
+    classDef orch fill:#EDE9FE,stroke:#7C3AED;
+    classDef agents fill:#DCFCE7,stroke:#16A34A;
+    classDef result fill:#FEF3C7,stroke:#D97706;
+
+    class U user;
+    class O orch;
+    class A,B,C,D agents;
+    class R,F result;
+```
+
+Multi-agent architecture is useful when:
+
+- Domains are genuinely different
+- Agents require different tools
+- Security boundaries differ
+- Tasks can run independently
+- Specialization improves quality
+
+But it adds:
+
+- Latency
+- Cost
+- Coordination complexity
+- Failure modes
+
+Microsoft explicitly recommends adding multi-agent complexity only when a single agent cannot reliably handle the problem.
+
+---
+
+# 24. Multi-Agent Orchestration Patterns
+
+This deserves its own architecture category.
+
+## 24.1 Sequential
+
+```mermaid
+flowchart LR
+    I["Input"] --> A["Agent A"] --> B["Agent B"] --> C["Agent C"] --> O["Output"]
+
+    classDef io fill:#DBEAFE,stroke:#2563EB;
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+    classDef output fill:#DCFCE7,stroke:#16A34A;
+
+    class I io;
+    class A,B,C agent;
+    class O output;
+```
+
+Use when the sequence is known.
+
+---
+
+## 24.2 Concurrent
+
+```mermaid
+flowchart TD
+    I["Input"] --> A["Agent A"]
+    I --> B["Agent B"]
+    I --> C["Agent C"]
+
+    A --> M["Aggregator"]
+    B --> M
+    C --> M
+
+    classDef input fill:#DBEAFE,stroke:#2563EB;
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+    classDef merge fill:#FEF3C7,stroke:#D97706;
+
+    class I input;
+    class A,B,C agent;
+    class M merge;
+```
+
+Use for independent analysis.
+
+---
+
+## 24.3 Handoff
+
+```mermaid
+flowchart LR
+    A["Agent A"] -->|Handoff| B["Agent B"]
+    B -->|Handoff| C["Agent C"]
+
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+
+    class A,B,C agent;
+```
+
+The active agent transfers responsibility.
+
+Useful for:
+
+- Escalation
+- Specialist routing
+- Customer support
+- Dynamic workflows
+
+---
+
+## 24.4 Group Chat
+
+```mermaid
+flowchart TD
+    M["Chat Manager"]
+
+    M --> A["Agent A"]
+    M --> B["Agent B"]
+    M --> C["Agent C"]
+
+    A <--> B
+    B <--> C
+    C <--> A
+
+    classDef manager fill:#FEF3C7,stroke:#D97706;
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+
+    class M manager;
+    class A,B,C agent;
+```
+
+Useful for:
+
+- Brainstorming
+- Consensus
+- Collaborative analysis
+- Debate
+
+---
+
+## 24.5 Magentic / Dynamic Orchestration
+
+```mermaid
+flowchart TD
+    G["🎯 Goal"] --> M["Dynamic Manager"]
+
+    M --> P["Task Plan"]
+    P --> A["Agent A"]
+    P --> B["Agent B"]
+    P --> C["Agent C"]
+
+    A --> F["Feedback"]
+    B --> F
+    C --> F
+
+    F --> M
+    M --> P
+
+    classDef goal fill:#DBEAFE,stroke:#2563EB;
+    classDef manager fill:#EDE9FE,stroke:#7C3AED;
+    classDef task fill:#FEF3C7,stroke:#D97706;
+    classDef agent fill:#DCFCE7,stroke:#16A34A;
+
+    class G goal;
+    class M manager;
+    class P,F task;
+    class A,B,C agent;
+```
+
+The manager dynamically creates and adapts the task plan.
+
+Microsoft currently describes sequential, concurrent, group chat, handoff, and magentic as key multi-agent orchestration patterns.
+
+---
+
+# 25. Pattern #21 — Tool Calling
+
+Tool calling connects AI reasoning with deterministic capabilities.
+
+```mermaid
+flowchart LR
+    A["🤖 AI Agent"] --> T["Tool Interface"]
+
+    T --> API["REST API"]
+    T --> DB["Database"]
+    T --> K["Kubernetes"]
+    T --> G["GitHub"]
+    T --> S["Search"]
+
+    API --> T
+    DB --> T
+    K --> T
+    G --> T
+    S --> T
+
+    T --> A
+
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+    classDef interface fill:#FEF3C7,stroke:#D97706;
+    classDef tool fill:#DCFCE7,stroke:#16A34A;
+
+    class A agent;
+    class T interface;
+    class API,DB,K,G,S tool;
+```
+
+This is an **architecture pattern**.
+
+---
+
+# 26. MCP — Important, But Not an AI Architecture Pattern
+
+This is where I would make a clear distinction in the blog.
+
+**MCP is not itself an AI architecture pattern.**
+
+MCP — Model Context Protocol — is a **protocol/integration mechanism** that standardizes how AI applications can interact with tools, resources, and other context.
+
+Architecturally:
+
+```mermaid
+flowchart LR
+    A["🤖 AI Application / Agent"] --> M["MCP Client"]
+
+    M --> S1["MCP Server"]
+    M --> S2["MCP Server"]
+    M --> S3["MCP Server"]
+
+    S1 --> T1["Tools"]
+    S2 --> T2["Resources"]
+    S3 --> T3["Enterprise APIs"]
+
+    classDef app fill:#EDE9FE,stroke:#7C3AED;
+    classDef mcp fill:#FEF3C7,stroke:#D97706;
+    classDef server fill:#DBEAFE,stroke:#2563EB;
+    classDef resource fill:#DCFCE7,stroke:#16A34A;
+
+    class A app;
+    class M mcp;
+    class S1,S2,S3 server;
+    class T1,T2,T3 resource;
+```
+
+Therefore:
+
+> **Tool-use is an AI architecture pattern. MCP is one protocol that can implement the integration layer used by that pattern.**
+
+This distinction is important for architects.
+
+AWS likewise describes MCP as a mechanism for providing agents access to external capabilities, data, and APIs.
+
+Official reference:
+
+[Model Context Protocol](https://modelcontextprotocol.io/)
+
+---
+
+# 27. Pattern #22 — Event-Driven AI
+
+AI does not always need to start with a user request.
+
+```mermaid
+flowchart LR
+    E["⚡ Event"] --> B["Event Bus"]
+
+    B --> A["AI Processor"]
+    B --> W["Workflow"]
+    B --> R["Rules"]
+
+    A --> O["Action"]
+    W --> O
+    R --> O
+
+    classDef event fill:#FEF3C7,stroke:#D97706;
+    classDef bus fill:#DBEAFE,stroke:#2563EB;
+    classDef process fill:#EDE9FE,stroke:#7C3AED;
+    classDef output fill:#DCFCE7,stroke:#16A34A;
+
+    class E event;
+    class B bus;
+    class A,W,R process;
+    class O output;
+```
+
+Examples:
+
+- New document → AI extraction
+- New GitHub PR → Code review
+- New incident → Root-cause analysis
+- New customer → Classification
+- New message → Summarization
+
+---
+
+# 28. Pattern #23 — Human-in-the-Loop
+
+AI autonomy should correspond to business risk.
+
+```mermaid
+flowchart TD
+    A["AI Decision"] --> C{"Confidence / Risk"}
+
+    C -->|Low Risk| X["Automatic Action"]
+    C -->|High Risk| H["👤 Human Review"]
+
+    H --> X
+
+    classDef ai fill:#EDE9FE,stroke:#7C3AED;
+    classDef decision fill:#FEF3C7,stroke:#D97706;
+    classDef auto fill:#DCFCE7,stroke:#16A34A;
+    classDef human fill:#FCE7F3,stroke:#DB2777;
+
+    class A ai;
+    class C decision;
+    class X auto;
+    class H human;
+```
+
+Use human approval for:
+
+- Financial decisions
+- Production changes
+- Security actions
+- Legal decisions
+- Compliance
+- High-impact customer actions
+
+---
+
+# 29. Pattern #24 — AI + Traditional Software
+
+One of the most important architecture patterns is knowing where **not** to use AI.
+
+```mermaid
+flowchart TB
+    A["Application"]
+
+    A --> AI["🤖 AI"]
+    A --> D["⚙️ Deterministic Software"]
+    A --> R["📐 Rules Engine"]
+
+    AI --> O["Business Outcome"]
+    D --> O
+    R --> O
+
+    classDef app fill:#DBEAFE,stroke:#2563EB;
+    classDef ai fill:#EDE9FE,stroke:#7C3AED;
+    classDef deterministic fill:#DCFCE7,stroke:#16A34A;
+    classDef rules fill:#FEF3C7,stroke:#D97706;
+
+    class A app;
+    class AI ai;
+    class D deterministic;
+    class R rules;
+    class O app;
+```
+
+Use traditional software for:
+
+- Authentication
+- Authorization
+- Financial calculations
+- Transactions
+- Deterministic validation
+- Safety constraints
+- Exact business rules
+
+Use AI for:
+
+- Natural-language understanding
+- Classification
+- Summarization
+- Reasoning
+- Generation
+- Ambiguous input interpretation
+
+---
+
+# 30. Pattern #25 — Guardrails
+
+Guardrails constrain AI behavior.
+
+```mermaid
+flowchart LR
+    I["Input"] --> G1["Input Guardrail"]
+    G1 --> A["AI / Agent"]
+    A --> G2["Tool Authorization"]
+    G2 --> G3["Output Guardrail"]
+    G3 --> O["Response"]
+
+    classDef input fill:#DBEAFE,stroke:#2563EB;
+    classDef guard fill:#FEF3C7,stroke:#D97706;
+    classDef ai fill:#EDE9FE,stroke:#7C3AED;
+    classDef output fill:#DCFCE7,stroke:#16A34A;
+
+    class I input;
+    class G1,G2,G3 guard;
+    class A ai;
+    class O output;
+```
+
+Guardrails can protect against:
+
+- Prompt injection
+- Data leakage
+- Unsafe actions
+- Policy violations
+- Tool misuse
+- Sensitive information exposure
+
+Guardrails are a **cross-cutting architecture concern**, not merely prompt instructions.
+
+---
+
+# 31. Pattern #26 — Authorization-Aware RAG
+
+Enterprise RAG must respect permissions.
+
+```mermaid
+flowchart LR
+    U["👤 User"] --> I["Identity"]
+    I --> A["Authorization"]
+    A --> R["Retriever"]
+
+    R --> D1["Allowed Data"]
+    R -.-> D2["Restricted Data"]
+
+    D1 --> L["LLM"]
+    L --> O["Answer"]
+
+    classDef user fill:#DBEAFE,stroke:#2563EB;
+    classDef security fill:#FFE4E6,stroke:#E11D48;
+    classDef retrieval fill:#FEF3C7,stroke:#D97706;
+    classDef data fill:#DCFCE7,stroke:#16A34A;
+    classDef model fill:#EDE9FE,stroke:#7C3AED;
+
+    class U user;
+    class I,A security;
+    class R retrieval;
+    class D1 data;
+    class D2 security;
+    class L model;
+    class O data;
+```
+
+The key principle:
+
+> **Retrieval permissions must never be weaker than the underlying data permissions.**
+
+---
+
+# 32. Pattern #27 — Caching
+
+AI systems can cache expensive operations.
+
+```mermaid
+flowchart LR
+    Q["Request"] --> C{"Cache Hit?"}
+
+    C -->|Yes| R["Cached Result"]
+    C -->|No| L["LLM / Retrieval"]
+
+    L --> S["Store Cache"]
+    S --> R
+
+    classDef query fill:#DBEAFE,stroke:#2563EB;
+    classDef cache fill:#FEF3C7,stroke:#D97706;
+    classDef model fill:#EDE9FE,stroke:#7C3AED;
+    classDef result fill:#DCFCE7,stroke:#16A34A;
+
+    class Q query;
+    class C,S cache;
+    class L model;
+    class R result;
+```
+
+Possible caches:
+
+- Exact response
+- Semantic response
+- Retrieval results
+- Embeddings
+- Tool results
+
+---
+
+# 33. Pattern #28 — Retry and Recovery
+
+AI systems fail.
+
+Tools fail.
+
+Models timeout.
+
+APIs become unavailable.
+
+Architecture should expect failure.
+
+```mermaid
+flowchart TD
+    A["AI Step"] --> C{"Success?"}
+
+    C -->|Yes| O["Continue"]
+    C -->|No| R["Retry"]
+
+    R --> C
+    R --> F["Fallback"]
+    F --> H["Human / Graceful Degradation"]
+
+    classDef ai fill:#EDE9FE,stroke:#7C3AED;
+    classDef decision fill:#FEF3C7,stroke:#D97706;
+    classDef success fill:#DCFCE7,stroke:#16A34A;
+    classDef recovery fill:#FFE4E6,stroke:#E11D48;
+
+    class A ai;
+    class C decision;
+    class O success;
+    class R,F,H recovery;
+```
+
+Production AI needs:
+
+- Timeouts
+- Retry limits
+- Backoff
+- Circuit breakers
+- Fallback models
+- Dead-letter handling
+- Graceful degradation
+
+---
+
+# 34. Pattern #29 — Stateful AI Workflow
+
+Long-running AI processes need persistent state.
+
+```mermaid
+flowchart LR
+    A["Workflow"] <--> S["State Store"]
+    A --> T1["Task 1"]
+    T1 --> T2["Task 2"]
+    T2 --> T3["Task 3"]
+
+    T3 --> C["Checkpoint"]
+
+    C --> S
+
+    classDef workflow fill:#EDE9FE,stroke:#7C3AED;
+    classDef state fill:#FEF3C7,stroke:#D97706;
+    classDef task fill:#DCFCE7,stroke:#16A34A;
+
+    class A workflow;
+    class S,C state;
+    class T1,T2,T3 task;
+```
+
+Useful for:
+
+- Long-running agents
+- Human approval
+- Multi-step workflows
+- Interrupted execution
+- Durable processes
+
+---
+
+# 35. Pattern #30 — Evaluation-Driven AI
+
+AI architecture must include evaluation from the beginning.
+
+```mermaid
+flowchart TB
+    A["AI Application"] --> O["Outputs"]
+    O --> E["Evaluation"]
+
+    E --> Q["Quality"]
+    E --> G["Groundedness"]
+    E --> S["Safety"]
+    E --> C["Cost"]
+    E --> L["Latency"]
+
+    Q --> I["Improve"]
+    G --> I
+    S --> I
+    C --> I
+    L --> I
+
+    I --> A
+
+    classDef app fill:#EDE9FE,stroke:#7C3AED;
+    classDef eval fill:#FEF3C7,stroke:#D97706;
+    classDef metric fill:#DBEAFE,stroke:#2563EB;
+    classDef improve fill:#DCFCE7,stroke:#16A34A;
+
+    class A app;
+    class O,E eval;
+    class Q,G,S,C,L metric;
+    class I improve;
+```
+
+Evaluate different layers separately.
+
+### RAG
+
+- Retrieval relevance
+- Recall
+- Precision
+- Groundedness
+
+### Generation
+
+- Accuracy
+- Completeness
+- Faithfulness
+- Relevance
+
+### Agents
+
+- Tool selection
+- Task completion
+- Number of steps
+- Failure rate
+
+### Platform
+
+- Cost
+- Latency
+- Availability
+- Throughput
+
+Microsoft's current RAG architecture guidance treats evaluation as a first-class part of RAG design rather than an afterthought.
+
+---
+
+# 36. Pattern #31 — AI Observability
+
+AI requires deeper observability than traditional applications.
+
+```mermaid
+flowchart LR
+    U["User"] --> A["Agent"]
+
+    A --> R["RAG"]
+    A --> T["Tools"]
+    A --> M["Model"]
+
+    A --> O["🔭 AI Observability"]
+
+    R --> O
+    T --> O
+    M --> O
+
+    O --> C["Cost"]
+    O --> L["Latency"]
+    O --> Q["Quality"]
+    O --> E["Errors"]
+    O --> X["Traces"]
+
+    classDef app fill:#EDE9FE,stroke:#7C3AED;
+    classDef component fill:#DBEAFE,stroke:#2563EB;
+    classDef obs fill:#FEF3C7,stroke:#D97706;
+    classDef metric fill:#DCFCE7,stroke:#16A34A;
+
+    class U,A app;
+    class R,T,M component;
+    class O obs;
+    class C,L,Q,E,X metric;
+```
+
+You should be able to trace:
+
+**User → Router → Agent → Retrieval → Tool → Model → Response**
+
+---
+
+# 37. Pattern #32 — AI Gateway
+
+At enterprise scale, applications should not all directly integrate with every model provider.
+
+```mermaid
+flowchart TB
+    A["Application A"] --> G["🛡️ AI Gateway"]
+    B["Application B"] --> G
+    C["Application C"] --> G
+
+    G --> O["OpenAI"]
+    G --> Gm["Gemini"]
+    G --> S["SLM"]
+    G --> OSS["Open Source"]
+
+    G --> P["Policy"]
+    G --> M["Monitoring"]
+    G --> Cst["Cost Control"]
+
+    classDef apps fill:#DBEAFE,stroke:#2563EB;
+    classDef gateway fill:#EDE9FE,stroke:#7C3AED;
+    classDef models fill:#DCFCE7,stroke:#16A34A;
+    classDef control fill:#FEF3C7,stroke:#D97706;
+
+    class A,B,C apps;
+    class G gateway;
+    class O,Gm,S,OSS models;
+    class P,M,Cst control;
+```
+
+The gateway can provide:
+
+- Model abstraction
+- Authentication
+- Rate limiting
+- Routing
+- Cost management
+- Logging
+- Policy enforcement
+- Failover
+
+---
+
+# 38. Pattern #33 — Event-Driven Multi-Agent Architecture
+
+Large AI platforms can combine agents and asynchronous messaging.
+
+```mermaid
+flowchart LR
+    E["Event"] --> B["Event Bus"]
+
+    B --> A["Agent A"]
+    B --> C["Agent B"]
+    B --> D["Agent C"]
+
+    A --> B
+    C --> B
+    D --> B
+
+    B --> O["Orchestrator"]
+
+    classDef event fill:#FEF3C7,stroke:#D97706;
+    classDef bus fill:#DBEAFE,stroke:#2563EB;
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+    classDef orch fill:#DCFCE7,stroke:#16A34A;
+
+    class E event;
+    class B bus;
+    class A,C,D agent;
+    class O orch;
+```
+
+This can provide:
+
+- Loose coupling
+- Scalability
+- Asynchronous execution
+- Independent agent deployment
+- Event replay
+
+---
+
+# 39. Pattern #34 — Simulation / Test-Bed Agents
+
+Agents can be evaluated inside simulated environments before production.
+
+```mermaid
+flowchart LR
+    A["Agent"] --> E["Simulation Environment"]
+    E --> F["Feedback"]
+    F --> A
+
+    E --> M["Metrics"]
+    M --> V["Evaluation"]
+
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+    classDef env fill:#DBEAFE,stroke:#2563EB;
+    classDef feedback fill:#FEF3C7,stroke:#D97706;
+    classDef eval fill:#DCFCE7,stroke:#16A34A;
+
+    class A agent;
+    class E env;
+    class F feedback;
+    class M,V eval;
+```
+
+Useful for:
+
+- Agent testing
+- Safety testing
+- Regression testing
+- Scenario simulation
+- Performance evaluation
+
+AWS includes simulation/test-bed agents and observer/monitoring agents among its agentic architecture patterns.
+
+---
+
+# 40. Pattern #35 — Observer / Monitoring Agent
+
+An agent can monitor another AI system.
+
+```mermaid
+flowchart LR
+    A["Production Agent"] --> O["Observer Agent"]
+
+    O --> Q["Quality"]
+    O --> S["Safety"]
+    O --> P["Performance"]
+    O --> C["Cost"]
+
+    O -->|Alert| H["Human / Operator"]
+
+    classDef agent fill:#EDE9FE,stroke:#7C3AED;
+    classDef observer fill:#FEF3C7,stroke:#D97706;
+    classDef metric fill:#DBEAFE,stroke:#2563EB;
+    classDef human fill:#DCFCE7,stroke:#16A34A;
+
+    class A agent;
+    class O observer;
+    class Q,S,P,C metric;
+    class H human;
+```
+
+This can be useful for complex autonomous systems.
+
+---
+
+# 41. Pattern #36 — Multimodal AI
+
+AI architecture doesn't have to be text-only.
+
+```mermaid
+flowchart LR
+    T["📝 Text"] --> M["Multimodal Model"]
+    I["🖼️ Image"] --> M
+    A["🎧 Audio"] --> M
+    V["🎥 Video"] --> M
+    D["📊 Data"] --> M
+
+    M --> O["Multimodal Output"]
+
+    classDef input fill:#DBEAFE,stroke:#2563EB;
+    classDef model fill:#EDE9FE,stroke:#7C3AED;
+    classDef output fill:#DCFCE7,stroke:#16A34A;
+
+    class T,I,A,V,D input;
+    class M model;
+    class O output;
+```
+
+Use cases include:
+
+- Document understanding
+- Visual inspection
+- Voice assistants
+- Video analysis
+- Multimodal search
+
+---
+
+# 42. Pattern #37 — Intelligent Document Processing
+
+A common enterprise architecture pattern combines:
+
+```text
+Document
+ ↓
+OCR / Parsing
+ ↓
+Classification
+ ↓
+Extraction
+ ↓
+Validation
+ ↓
+Human Review
+ ↓
+Business System
+```
+
+```mermaid
+flowchart LR
+    D["📄 Document"] --> P["Parse / OCR"]
+    P --> C["Classify"]
+    C --> X["Extract"]
+    X --> V["Validate"]
+    V --> H{"Human Review?"}
+    H -->|Yes| HR["Human"]
+    H -->|No| B["Business System"]
+    HR --> B
+
+    classDef doc fill:#DBEAFE,stroke:#2563EB;
+    classDef ai fill:#EDE9FE,stroke:#7C3AED;
+    classDef validate fill:#FEF3C7,stroke:#D97706;
+    classDef human fill:#FCE7F3,stroke:#DB2777;
+    classDef output fill:#DCFCE7,stroke:#16A34A;
+
+    class D doc;
+    class P,C,X ai;
+    class V,H validate;
+    class HR human;
+    class B output;
+```
+
+AWS identifies intelligent document processing as a repeatable enterprise generative-AI application pattern.
+
+---
+
+# 43. How the Patterns Fit Together
+
+The real architecture usually combines multiple patterns.
+
+Consider an enterprise AI assistant:
+
+```mermaid
+flowchart TB
+
+    U["👤 User"] --> UI["Application / Chat"]
+    UI --> G["AI Gateway"]
+
+    G --> R["🚦 Router"]
+
+    R --> S["Simple LLM"]
+    R --> A["🤖 Agent"]
+
+    A --> C["Context Layer"]
+
+    C --> MEM["Memory"]
+    C --> RAG["RAG"]
+    C --> POL["Policies"]
+
+    A --> TOOLS["Tool Layer"]
+
+    TOOLS --> API["APIs"]
+    TOOLS --> DB["Databases"]
+    TOOLS --> MCP["MCP Servers"]
+
+    A --> O["Orchestration"]
+
+    O --> SEQ["Sequential"]
+    O --> PAR["Parallel"]
+    O --> HAND["Handoff"]
+
+    A --> G2["Guardrails"]
+
+    G2 --> H{"Human Approval?"}
+    H -->|Yes| HR["Human"]
+    H -->|No| OUT["Response"]
+    HR --> OUT
+
+    OUT --> EV["Evaluation"]
+    OUT --> OBS["Observability"]
+
+    classDef user fill:#DBEAFE,stroke:#2563EB;
+    classDef gateway fill:#E0E7FF,stroke:#4F46E5;
+    classDef ai fill:#EDE9FE,stroke:#7C3AED;
+    classDef knowledge fill:#DCFCE7,stroke:#16A34A;
+    classDef tools fill:#DBEAFE,stroke:#2563EB;
+    classDef orchestration fill:#FEF3C7,stroke:#D97706;
+    classDef security fill:#FFE4E6,stroke:#E11D48;
+    classDef ops fill:#E0F2FE,stroke:#0284C7;
+
+    class U,UI user;
+    class G gateway;
+    class R,S,A,C,OUT ai;
+    class MEM,RAG,POL knowledge;
+    class TOOLS,API,DB,MCP tools;
+    class O,SEQ,PAR,HAND orchestration;
+    class G2,H,HR security;
+    class EV,OBS ops;
+```
+
+Notice the distinction:
+
+### Architecture patterns
+
+- RAG
+- Routing
+- Prompt chaining
+- Parallelization
+- Agents
+- Multi-agent orchestration
+- Evaluator-optimizer
+- Memory
+- Event-driven processing
+
+### Integration mechanisms
+
+- APIs
+- Tool calling
+- MCP
+- Event buses
+- Databases
+
+### Cross-cutting concerns
+
+- Security
+- Guardrails
+- Governance
+- Evaluation
+- Observability
+- Cost
+- Reliability
+
+### Technologies
+
+- OpenAI
+- Gemini
+- Claude
+- Azure
+- AWS
+- Google Cloud
+- LangGraph
+- Semantic Kernel
+- Agent Framework
+- Kubernetes
+- Vector databases
+
+This separation is **very important for an AI Architect**.
+
+---
+
+# 44. AI Architecture Pattern Selection Matrix
+
+| Problem | Pattern | Complexity | Main Benefit |
+|---|---|---:|---|
+| Simple generation | Direct Model Call | 🟢 | Simplicity |
+| Known workflow | Deterministic Workflow | 🟢 | Predictability |
+| Multi-step AI task | Prompt Chaining | 🟢🟡 | Structured reasoning |
+| Different request types | Routing | 🟡 | Specialization |
+| Different model capabilities | Model Routing | 🟡 | Cost / quality |
+| Independent tasks | Parallelization | 🟡 | Lower latency |
+| Conditional process | Branching | 🟡 | Flexibility |
+| Improve output | Evaluator-Optimizer | 🟡 | Quality |
+| Self-correction | Reflection | 🟡 | Better results |
+| Complex task | Planning | 🟡🟠 | Decomposition |
+| External knowledge | RAG | 🟡 | Grounding |
+| Complex retrieval | Agentic RAG | 🟠 | Dynamic retrieval |
+| Dynamic tool use | Single Agent | 🟠 | Autonomy |
+| Specialized agents | Multi-Agent | 🔴 | Specialization |
+| Open-ended coordination | Magentic | 🔴 | Dynamic collaboration |
+| Persistent context | Memory | 🟡 | Continuity |
+| External systems | Tool Calling | 🟡 | Action |
+| Tool interoperability | MCP | 🟡 | Standardized integration |
+| High-risk decisions | Human-in-the-loop | 🟡 | Safety |
+| Large enterprise platform | AI Gateway | 🟠 | Central governance |
+| Async AI processing | Event-driven | 🟠 | Scalability |
+| Production quality | Evaluation | 🟠 | Reliability |
+| Production visibility | Observability | 🟠 | Operations |
+
+---
+
+# 45. The AI Architect's Complexity Ladder
+
+One of the most useful principles is:
+
+> **Use the simplest architecture that reliably solves the problem.**
+
+```mermaid
+flowchart TD
+    A["1️⃣ Direct Model"] --> B["2️⃣ Deterministic Workflow"]
+    B --> C["3️⃣ RAG"]
+    C --> D["4️⃣ Tool-Using Agent"]
+    D --> E["5️⃣ Agent + Memory"]
+    E --> F["6️⃣ Multi-Agent"]
+    F --> G["7️⃣ Dynamic / Magentic"]
+    G --> H["8️⃣ Enterprise AI Platform"]
+
+    classDef l1 fill:#DCFCE7,stroke:#16A34A;
+    classDef l2 fill:#DBEAFE,stroke:#2563EB;
+    classDef l3 fill:#FEF3C7,stroke:#D97706;
+    classDef l4 fill:#EDE9FE,stroke:#7C3AED;
+    classDef l5 fill:#FCE7F3,stroke:#DB2777;
+    classDef l6 fill:#FFE4E6,stroke:#E11D48;
+    classDef l7 fill:#E0E7FF,stroke:#4F46E5;
+    classDef l8 fill:#7C3AED,stroke:#5B21B6,color:#fff;
+
+    class A l1;
+    class B,C l2;
+    class D l3;
+    class E l4;
+    class F l5;
+    class G l6;
+    class H l8;
+```
+
+Do **not** automatically move from left to right.
+
+For many applications, stopping at level 2 or 3 is the correct architecture.
+
+---
+
+# 46. A Practical Decision Tree
+
+```mermaid
+flowchart TD
+    S["🎯 Start With Business Problem"]
+
+    S --> Q1{"Single model call enough?"}
+
+    Q1 -->|Yes| M["Direct Model"]
+    Q1 -->|No| Q2{"Need external knowledge?"}
+
+    Q2 -->|Yes| R["RAG"]
+    Q2 -->|No| Q3{"Is workflow deterministic?"}
+
+    Q3 -->|Yes| W["Workflow / Prompt Chain"]
+    Q3 -->|No| A["Agent"]
+
+    R --> Q4{"Dynamic retrieval?"}
+    Q4 -->|No| SR["Standard RAG"]
+    Q4 -->|Yes| AR["Agentic RAG"]
+
+    A --> Q5{"Need multiple specialists?"}
+    Q5 -->|No| SA["Single Agent"]
+    Q5 -->|Yes| MA["Multi-Agent"]
+
+    MA --> Q6{"Known coordination?"}
+    Q6 -->|Yes| SEQ["Sequential / Concurrent / Handoff"]
+    Q6 -->|No| MAG["Dynamic / Magentic"]
+
+    classDef start fill:#DBEAFE,stroke:#2563EB;
+    classDef decision fill:#FEF3C7,stroke:#D97706;
+    classDef simple fill:#DCFCE7,stroke:#16A34A;
+    classDef complex fill:#EDE9FE,stroke:#7C3AED;
+
+    class S start;
+    class Q1,Q2,Q3,Q4,Q5,Q6 decision;
+    class M,R,W,SR,AR,SA,MA,SEQ,MAG simple;
+```
+
+---
+
+# 47. Common Architecture Mistakes
+
+## ❌ Mistake 1: Everything becomes an Agent
+
+A simple workflow does not need autonomous reasoning.
+
+---
+
+## ❌ Mistake 2: Everything becomes RAG
+
+If the model already knows the required information, retrieval can introduce unnecessary latency and complexity.
+
+---
+
+## ❌ Mistake 3: Multi-Agent because it sounds advanced
+
+More agents mean:
+
+- More communication
+- More tokens
+- More latency
+- More failure modes
+- More difficult debugging
+
+---
+
+## ❌ Mistake 4: Treating MCP as the architecture
+
+MCP is an integration protocol.
+
+It does not replace:
+
+- Agent architecture
+- Workflow orchestration
+- Security
+- RAG
+- Governance
+- Evaluation
+
+---
+
+## ❌ Mistake 5: No deterministic boundaries
+
+Critical operations should not rely entirely on LLM judgment.
+
+Use traditional software where exact behavior matters.
+
+---
+
+## ❌ Mistake 6: No evaluation
+
+A successful demo is not proof of a production-ready AI system.
+
+---
+
+## ❌ Mistake 7: Ignoring authorization
+
+Enterprise AI must enforce the same data permissions as the underlying systems.
+
+---
+
+# 48. AI Architecture Is a Combination of Patterns
+
+The most important idea to remember is this:
+
+```text
+                     BUSINESS PROBLEM
+                            │
+                            ▼
+                     PATTERN SELECTION
+                            │
+          ┌─────────────────┼─────────────────┐
+          ▼                 ▼                 ▼
+       Knowledge          Reasoning        Action
+          │                 │                 │
+         RAG             Agent            Tools
+          │                 │                 │
+          └─────────────────┼─────────────────┘
+                            ▼
+                       Orchestration
+                            │
+                            ▼
+                       Guardrails
+                            │
+                            ▼
+                    Human Oversight
+                            │
+                            ▼
+                    Evaluation + Ops
+```
+
+The best architecture is rarely a single pattern.
+
+It is usually a **composition of patterns**.
+
+---
+
+# 49. The Modern AI Architecture Stack
+
+A mature enterprise AI platform can therefore look like this:
+
+```mermaid
+flowchart TB
+
+    UX["🖥️ EXPERIENCE"]
+    APP["🤖 AI APPLICATIONS"]
+    ORCH["🎯 ORCHESTRATION"]
+    AGENT["🧠 AGENT / REASONING"]
+    KNOW["📚 KNOWLEDGE / MEMORY"]
+    MODEL["⚡ MODEL LAYER"]
+    TOOL["🔌 TOOL / INTEGRATION"]
+    DATA["🗄️ DATA"]
+    SEC["🔐 SECURITY / GOVERNANCE"]
+    OPS["📊 EVALUATION / OBSERVABILITY"]
+
+    UX --> APP
+    APP --> ORCH
+    ORCH --> AGENT
+    AGENT --> KNOW
+    AGENT --> MODEL
+    AGENT --> TOOL
+    KNOW --> DATA
+    TOOL --> DATA
+
+    SEC -.-> APP
+    SEC -.-> AGENT
+    SEC -.-> KNOW
+    SEC -.-> TOOL
+
+    OPS -.-> APP
+    OPS -.-> AGENT
+    OPS -.-> MODEL
+    OPS -.-> TOOL
+
+    classDef experience fill:#DBEAFE,stroke:#2563EB;
+    classDef app fill:#EDE9FE,stroke:#7C3AED;
+    classDef orch fill:#FEF3C7,stroke:#D97706;
+    classDef knowledge fill:#DCFCE7,stroke:#16A34A;
+    classDef model fill:#E0E7FF,stroke:#4F46E5;
+    classDef tool fill:#E0F2FE,stroke:#0284C7;
+    classDef data fill:#F0FDF4,stroke:#16A34A;
+    classDef security fill:#FFE4E6,stroke:#E11D48;
+    classDef ops fill:#FCE7F3,stroke:#DB2777;
+
+    class UX experience;
+    class APP app;
+    class ORCH orch;
+    class AGENT,KNOW knowledge;
+    class MODEL model;
+    class TOOL tool;
+    class DATA data;
+    class SEC security;
+    class OPS ops;
+```
+
+This is not a single product architecture.
+
+It is a **reference mental model** for designing AI systems.
+
+---
+
+# 50. Final Takeaway for AI Architects
+
+AI Architecture is moving from:
+
+**Model-centric architecture**
+
+to:
+
+**System-centric architecture**
+
+The model is becoming one component of a much larger intelligent system.
+
+A modern AI Architect needs to understand:
+
+### Model patterns
+
+- Direct model invocation
+- Model routing
+- Model cascade
+- Model fallback
+
+### Knowledge patterns
+
+- RAG
+- Hybrid RAG
+- GraphRAG
+- Agentic RAG
+- Self-reflective RAG
+- Knowledge routing
+- Memory
+- Context engineering
+
+### Workflow patterns
+
+- Deterministic workflows
+- Prompt chaining
+- Routing
+- Branching
+- Parallelization
+- Planning
+- Evaluator-optimizer
+- Reflection
+
+### Agent patterns
+
+- Single agent
+- Tool-using agent
+- Orchestrator-workers
+- Multi-agent
+- Sequential
+- Concurrent
+- Handoff
+- Group chat
+- Dynamic / Magentic
+
+### Integration patterns
+
+- Tool calling
+- API integration
+- Event-driven AI
+- Human-in-the-loop
+- Traditional software + AI
+- MCP as an integration protocol
+
+### Enterprise patterns
+
+- AI Gateway
+- Authorization-aware RAG
+- Guardrails
+- Model fallback
+- Stateful execution
+- Caching
+- Reliability and recovery
+
+### Operational patterns
+
+- Evaluation
+- Observability
+- Cost management
+- Security
+- Governance
+- Simulation and testing
+- Continuous improvement
+
+And the most important architectural principle remains:
+
+> **Start simple. Add intelligence where it creates value. Add autonomy where it is justified. Add complexity only when the problem requires it.**
+
+That is the difference between **building an AI demo** and **architecting a production AI system**.
+
+---
+
+# References & Architecture Resources
+
+## Microsoft Azure Architecture Center
+
+**AI Architecture Overview**  
+[Microsoft — AI Technology Overview](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/ai-overview?utm_source=chatgpt.com)
+
+Covers AI workload architecture, direct model calls, agent-based architectures and multi-agent systems.
+
+**AI Workload Architecture Pattern**  
+[Microsoft — Architecture pattern for AI workloads](https://learn.microsoft.com/en-us/azure/well-architected/ai/architecture-pattern?utm_source=chatgpt.com)
+
+Provides baseline architecture for AI workloads and discusses secure, scalable and governed AI systems.
+
+**AI Agent Orchestration Patterns**  
+[Microsoft — AI Agent Orchestration Patterns](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns?utm_source=chatgpt.com)
+
+Covers:
+
+- Sequential
+- Concurrent
+- Group Chat
+- Handoff
+- Magentic orchestration
+
+**RAG Architecture Guide**  
+[Microsoft — Design and Develop a RAG Solution](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/rag/rag-solution-design-and-evaluation-guide?utm_source=chatgpt.com)
+
+Covers RAG architecture, chunking, enrichment, embeddings, retrieval, evaluation and agentic RAG.
+
+**Agentic RAG**  
+[Microsoft — Develop an Agentic RAG Solution](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/rag/rag-agentic?utm_source=chatgpt.com)
+
+Covers dynamic retrieval, reasoning loops and tool-based retrieval.
+
+---
+
+# AWS Architecture References
+
+**Agentic AI Patterns and Workflows**  
+[AWS — Designing agentic workflows](https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-patterns/designing-agentic-workflows-on-aws.html?utm_source=chatgpt.com)
+
+This is one of the strongest current references for AI/agent architecture patterns. It covers:
+
+- Basic reasoning agents
+- Tool-based agents
+- Computer-use agents
+- Coding agents
+- Speech/voice agents
+- Workflow orchestration
+- Memory-augmented agents
+- Simulation agents
+- Observer agents
+- Multi-agent collaboration
+- Prompt chaining
+- Routing
+- Parallelization
+- Evaluator/reflection patterns
+
+**AWS Agent Patterns**  
+[AWS — Agent Patterns](https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-patterns/agent-patterns.html?utm_source=chatgpt.com)
+
+Explains the conceptual model of agents around perception, reasoning and action.
+
+**Prompt Chaining**  
+[AWS — Workflow for Prompt Chaining](https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-patterns/workflow-for-prompt-chaining.html?utm_source=chatgpt.com)
+
+**Routing**  
+[AWS — Workflow for Routing](https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-patterns/workflow-for-routing.html?utm_source=chatgpt.com)
+
+**MCP**  
+[AWS — What is MCP?](https://docs.aws.amazon.com/prescriptive-guidance/latest/mcp-strategies/what-is-mcp.html?utm_source=chatgpt.com)
+
+---
+
+# Google Cloud References
+
+**Agentic AI Design Patterns**  
+[Google Cloud — Choose a design pattern for your agentic AI system](https://cloud.google.com/architecture/choose-design-pattern-agentic-ai-system?utm_source=chatgpt.com)
+
+Provides architecture guidance for sequential and other multi-agent approaches.
+
+---
+
+# Anthropic References
+
+**Building Effective AI Agents**  
+[Anthropic — Building Effective AI Agents](https://resources.anthropic.com/building-effective-ai-agents?utm_source=chatgpt.com)
+
+Useful reference for deciding between workflows, single-agent and multi-agent architectures and for understanding when complexity is justified.
+
+---
+
+# Community Reference
+
+**Awesome AI Architect — AI Architecture Patterns**  
+[Awesome AI Architect — AI Architecture Patterns](https://github.com/max420max/awesome-ai-architect/blob/main/ai-architecture-topics/ai-architecture-patterns.md?utm_source=chatgpt.com)
+
+A useful community-oriented reference for exploring AI architecture topics.
+
+---
+
+# One-Sentence Summary
+
+> **AI Architecture is not about choosing an LLM or an agent framework; it is about composing the right patterns for knowledge, reasoning, workflow, autonomy, integration, security, reliability, and operations to solve a business problem.**
